@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 5: Deadlocks</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛑</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to OS Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🛑 Module 5: Deadlocks</h1>
+    <p class="text-[var(--muted-foreground)]">Coffman Conditions, Banker's Algorithm, and Resource Allocation Graphs (RAG)</p>
+  </div>
+
+  <!-- 1. DEFINITION & 4 CONDITIONS -->
+  <div class="content-box border-l-4 border-l-red-500">
+    <h2 class="text-xl font-bold text-red-400 mb-3">1️⃣ What is a Deadlock?</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">A situation where a set of processes are blocked because each process is holding a resource and waiting for another resource held by some other process in the set.</p>
+    
+    <h3 class="text-md font-bold text-white mb-2">The 4 Necessary Conditions (Coffman Conditions)</h3>
+    <p class="text-xs text-gray-400 mb-4">Deadlock ONLY happens if <strong>ALL FOUR</strong> of these conditions occur simultaneously:</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-[#121215] p-3 rounded border border-[var(--border)]">
+        <h4 class="text-red-300 font-bold mb-1 text-sm">1. Mutual Exclusion</h4>
+        <p class="text-xs text-[var(--muted-foreground)]">At least one resource must be held in a non-shareable mode (only one process can use it at a time).</p>
+      </div>
+      <div class="bg-[#121215] p-3 rounded border border-[var(--border)]">
+        <h4 class="text-red-300 font-bold mb-1 text-sm">2. Hold and Wait</h4>
+        <p class="text-xs text-[var(--muted-foreground)]">A process must be holding at least one resource and waiting to acquire additional resources held by other processes.</p>
+      </div>
+      <div class="bg-[#121215] p-3 rounded border border-[var(--border)]">
+        <h4 class="text-red-300 font-bold mb-1 text-sm">3. No Preemption</h4>
+        <p class="text-xs text-[var(--muted-foreground)]">Resources cannot be forcibly taken away from a process; they must be released voluntarily.</p>
+      </div>
+      <div class="bg-[#121215] p-3 rounded border border-[var(--border)]">
+        <h4 class="text-red-300 font-bold mb-1 text-sm">4. Circular Wait</h4>
+        <p class="text-xs text-[var(--muted-foreground)]">A closed chain of processes exists, where P1 waits for P2, P2 waits for P3... and Pn waits for P1.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. STRATEGIES -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-4">2️⃣ Deadlock Handling Strategies</h2>
+
+    <ul class="space-y-3 text-sm text-[var(--muted-foreground)] list-disc list-inside">
+      <li><strong class="text-white">Deadlock Ignorance (Ostrich Algorithm):</strong> Just ignore it! Pretend deadlocks never happen. This is exactly what Windows and Linux do because deadlocks are rare and handling them is too expensive.</li>
+      <li><strong class="text-white">Deadlock Prevention:</strong> Design the system so that at least ONE of the 4 Coffman conditions is strictly logically impossible (e.g., denying Circular Wait by forcing processes to request resources in strict numerical order).</li>
+      <li><strong class="text-white">Deadlock Avoidance:</strong> OS checks every resource request. If granting it leads to an "unsafe state", it makes the process wait. (<strong>Banker's Algorithm</strong>).</li>
+      <li><strong class="text-white">Deadlock Detection & Recovery:</strong> Let the deadlock happen, detect it using algorithms, and recover by killing processes or rolling them back.</li>
+    </ul>
+  </div>
+
+  <!-- 3. BANKER'S ALGORITHM -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">3️⃣ Banker's Algorithm (Deadlock Avoidance)</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">This is the single most tested numerical topic in GATE Deadlocks. The algorithm checks if there is a <strong>Safe Sequence</strong> in which all processes can finish without getting stuck.</p>
+
+    <div class="bg-[#202024] p-4 rounded-lg border border-[var(--border)] mb-4">
+      <h4 class="font-bold text-white mb-2 text-sm">The Golden Rule of Banker's Algorithm:</h4>
+      <p class="text-lg text-center font-monospace text-blue-300 my-2"><span class="formula-badge">Need = Max - Allocation</span></p>
+      <p class="text-xs text-gray-400 mt-2">If <code>Need <= Available</code>, the process executes, finishes, and releases ALL its allocated resources back to Available (<code>Available = Available + Allocation</code>).</p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ GATE TRAP: Unsafe State vs Deadlock</h4>
+      <p class="text-sm text-gray-300">If the system is in a Safe State, deadlock is 100% impossible.<br>
+      However, if the system is in an <strong>Unsafe State</strong>, it DOES NOT mean it is deadlocked! It only means deadlock is <em>possible</em> if processes request their maximum resources.</p>
+    </div>
+  </div>
+
+  <!-- 4. RAG -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ Resource Allocation Graph (RAG)</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-3">A visual way to check for deadlocks. Vertices are Processes (Circles) and Resources (Rectangles).</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded text-center">
+        <h4 class="font-bold text-sm mb-2 text-gray-300">Single Instance Resources</h4>
+        <p class="text-xs text-[var(--muted-foreground)]">If every resource has exactly 1 instance:<br>
+        <strong>Cycle = Deadlock.</strong> (100% guaranteed).</p>
+      </div>
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded text-center">
+        <h4 class="font-bold text-sm mb-2 text-gray-300">Multiple Instance Resources</h4>
+        <p class="text-xs text-[var(--muted-foreground)]">If resources have >1 instance:<br>
+        <strong>Cycle ≠ Deadlock necessarily!</strong><br>
+        (It's only a necessary condition, you must run Banker's algorithm or reduction to be sure).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to OS Index
+    </a>
+  </div>
+
+</body>
+</html>
