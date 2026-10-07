@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 3: CPU Scheduling</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    
+    /* Gantt Chart Styles */
+    .gantt-container { display: flex; align-items: stretch; margin: 1rem 0; width: 100%; border: 1px solid var(--border); }
+    .gantt-block { position: relative; border-right: 1px solid var(--border); text-align: center; padding: 0.75rem 0; font-weight: bold; font-family: monospace; }
+    .gantt-block:last-child { border-right: none; }
+    .gantt-time { position: absolute; bottom: -20px; right: -10px; font-size: 0.75rem; color: var(--muted-foreground); }
+    .gantt-time-start { position: absolute; bottom: -20px; left: -5px; font-size: 0.75rem; color: var(--muted-foreground); }
+    
+    .formula-badge { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to OS Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">⏱️ Module 3: CPU Scheduling</h1>
+    <p class="text-[var(--muted-foreground)]">FCFS, SJF, SRTF, Round Robin, and Priority Scheduling</p>
+  </div>
+
+  <!-- 1. SCHEDULING CRITERIA (FORMULAS) -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">1️⃣ The Golden Formulas (Memorize These!)</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">Every GATE numerical relies on perfectly understanding these 5 terms.</p>
+    
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border-b border-[var(--border)]">
+            <th class="p-3">Term</th>
+            <th class="p-3">Definition</th>
+            <th class="p-3">Formula</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[var(--border)] text-[var(--muted-foreground)]">
+          <tr>
+            <td class="p-3 font-bold text-white">Arrival Time (AT)</td>
+            <td class="p-3">Time when the process enters the Ready Queue.</td>
+            <td class="p-3">-</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-bold text-white">Burst Time (BT)</td>
+            <td class="p-3">Time required by the CPU to execute the process.</td>
+            <td class="p-3">-</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-bold text-white">Completion Time (CT)</td>
+            <td class="p-3">Time when the process fully completes execution.</td>
+            <td class="p-3">Read from right side of Gantt chart</td>
+          </tr>
+          <tr class="bg-blue-500/5">
+            <td class="p-3 font-bold text-blue-300">Turnaround Time (TAT)</td>
+            <td class="p-3">Total time spent in the system (from arrival to completion).</td>
+            <td class="p-3"><span class="formula-badge">TAT = CT - AT</span></td>
+          </tr>
+          <tr class="bg-emerald-500/5">
+            <td class="p-3 font-bold text-emerald-300">Waiting Time (WT)</td>
+            <td class="p-3">Total time spent waiting in the ready queue.</td>
+            <td class="p-3"><span class="formula-badge">WT = TAT - BT</span></td>
+          </tr>
+          <tr>
+            <td class="p-3 font-bold text-white">Response Time (RT)</td>
+            <td class="p-3">Time from arrival until the FIRST time it gets the CPU.</td>
+            <td class="p-3"><span class="formula-badge">RT = (First CPU Allocation) - AT</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2. ALGORITHMS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-4">2️⃣ Scheduling Algorithms</h2>
+
+    <div class="space-y-6">
+      
+      <!-- FCFS -->
+      <div class="border border-[var(--border)] rounded-lg p-4 bg-[#121215]">
+        <h3 class="text-lg font-bold text-orange-400 mb-2">1. First Come First Served (FCFS)</h3>
+        <p class="text-sm text-[var(--muted-foreground)] mb-2"><strong>Type:</strong> Non-Preemptive. Processes are executed in the exact order they arrive.</p>
+        <p class="text-sm text-red-400 font-semibold mb-1">⚠️ GATE Trap: Convoy Effect</p>
+        <p class="text-xs text-[var(--muted-foreground)]">If a massive process (high BT) arrives first, all short processes behind it get stuck waiting. This plummets CPU utilization and skyrockets average waiting time.</p>
+      </div>
+
+      <!-- SJF -->
+      <div class="border border-[var(--border)] rounded-lg p-4 bg-[#121215]">
+        <h3 class="text-lg font-bold text-emerald-400 mb-2">2. Shortest Job First (SJF) / SRTF</h3>
+        <p class="text-sm text-[var(--muted-foreground)] mb-2"><strong>Type:</strong> Can be Non-Preemptive (SJF) or Preemptive (SRTF - Shortest Remaining Time First).</p>
+        <p class="text-sm text-gray-300 mb-2">The CPU always picks the process in the ready queue with the <em>shortest remaining burst time</em>.</p>
+        <div class="bg-emerald-500/10 border border-emerald-500/30 p-2 rounded text-xs text-emerald-200">
+          <strong>🏆 Golden Rule:</strong> SJF gives the <strong>minimum average waiting time</strong> among all algorithms.
+        </div>
+        <p class="text-sm text-red-400 font-semibold mt-2 mb-1">⚠️ GATE Trap: Starvation</p>
+        <p class="text-xs text-[var(--muted-foreground)]">Long processes may never get CPU time if short processes keep arriving. (Solution: Aging).</p>
+      </div>
+
+      <!-- Round Robin -->
+      <div class="border border-[var(--border)] rounded-lg p-4 bg-[#121215]">
+        <h3 class="text-lg font-bold text-purple-400 mb-2">3. Round Robin (RR)</h3>
+        <p class="text-sm text-[var(--muted-foreground)] mb-2"><strong>Type:</strong> Preemptive only. Designed for Time-Sharing systems.</p>
+        <p class="text-sm text-[var(--muted-foreground)] mb-2">Every process gets a fixed <strong>Time Quantum (TQ)</strong>. If it doesn't finish, it gets preempted and pushed to the back of the Ready Queue.</p>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="bg-[#18181b] p-2 rounded border border-[var(--border)]">If TQ is too large → Degrades to FCFS.</div>
+          <div class="bg-[#18181b] p-2 rounded border border-[var(--border)]">If TQ is too small → Massive context switch overhead.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. GANTT CHART EXAMPLE -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-4">3️⃣ Master Numerical (SJF Preemptive / SRTF)</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">Let's solve a classic GATE question using Shortest Remaining Time First (SRTF).<br>
+    <strong>Tie-breaker Rule:</strong> If burst times are equal, pick the one that arrived first.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <table class="w-full text-sm text-center border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border border-[var(--border)]">
+            <th class="p-2 border border-[var(--border)]">Process</th>
+            <th class="p-2 border border-[var(--border)]">AT</th>
+            <th class="p-2 border border-[var(--border)]">BT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="p-2 border border-[var(--border)] text-blue-400">P1</td><td class="p-2 border border-[var(--border)]">0</td><td class="p-2 border border-[var(--border)]">8</td></tr>
+          <tr><td class="p-2 border border-[var(--border)] text-emerald-400">P2</td><td class="p-2 border border-[var(--border)]">1</td><td class="p-2 border border-[var(--border)]">4</td></tr>
+          <tr><td class="p-2 border border-[var(--border)] text-purple-400">P3</td><td class="p-2 border border-[var(--border)]">2</td><td class="p-2 border border-[var(--border)]">9</td></tr>
+          <tr><td class="p-2 border border-[var(--border)] text-orange-400">P4</td><td class="p-2 border border-[var(--border)]">3</td><td class="p-2 border border-[var(--border)]">5</td></tr>
+        </tbody>
+      </table>
+      
+      <div class="text-xs text-[var(--muted-foreground)] bg-[#121215] p-3 border border-[var(--border)] rounded">
+        <strong>Execution Trace:</strong><br>
+        t=0: Only P1 is available. (P1 runs)<br>
+        t=1: P2 arrives. P1 has BT=7, P2 has BT=4. P2 wins! (Preemption)<br>
+        t=2: P3 arrives (BT=9). P2 still shortest (BT=3). (P2 continues)<br>
+        t=3: P4 arrives (BT=5). P2 still shortest (BT=2). (P2 continues)<br>
+        t=5: P2 completes. Shortest left is P4 (BT=5).<br>
+        t=10: P4 completes. Shortest left is P1 (BT=7).<br>
+        t=17: P1 completes. Only P3 left (BT=9).<br>
+        t=26: P3 completes.
+      </div>
+    </div>
+
+    <!-- Gantt Chart -->
+    <h3 class="text-sm font-bold text-gray-300 mb-2">Gantt Chart</h3>
+    <div class="gantt-container mb-8 h-12 bg-[#202024]">
+      <!-- P1 (0-1) -->
+      <div class="gantt-block bg-blue-500/20 text-blue-400 flex items-center justify-center" style="flex: 1;">
+        P1
+        <span class="gantt-time-start">0</span>
+        <span class="gantt-time">1</span>
+      </div>
+      <!-- P2 (1-5) -->
+      <div class="gantt-block bg-emerald-500/20 text-emerald-400 flex items-center justify-center" style="flex: 4;">
+        P2
+        <span class="gantt-time">5</span>
+      </div>
+      <!-- P4 (5-10) -->
+      <div class="gantt-block bg-orange-500/20 text-orange-400 flex items-center justify-center" style="flex: 5;">
+        P4
+        <span class="gantt-time">10</span>
+      </div>
+      <!-- P1 (10-17) -->
+      <div class="gantt-block bg-blue-500/20 text-blue-400 flex items-center justify-center" style="flex: 7;">
+        P1
+        <span class="gantt-time">17</span>
+      </div>
+      <!-- P3 (17-26) -->
+      <div class="gantt-block bg-purple-500/20 text-purple-400 flex items-center justify-center" style="flex: 9;">
+        P3
+        <span class="gantt-time">26</span>
+      </div>
+    </div>
+
+    <!-- Calculation Table -->
+    <table class="w-full text-sm text-center border-collapse">
+      <thead>
+        <tr class="bg-[#202024] border border-[var(--border)]">
+          <th class="p-2 border border-[var(--border)]">Process</th>
+          <th class="p-2 border border-[var(--border)]">CT</th>
+          <th class="p-2 border border-[var(--border)]">TAT = CT - AT</th>
+          <th class="p-2 border border-[var(--border)]">WT = TAT - BT</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-300">
+        <tr><td class="p-2 border border-[var(--border)] font-bold">P1</td><td class="p-2 border border-[var(--border)]">17</td><td class="p-2 border border-[var(--border)]">17 - 0 = 17</td><td class="p-2 border border-[var(--border)]">17 - 8 = 9</td></tr>
+        <tr><td class="p-2 border border-[var(--border)] font-bold">P2</td><td class="p-2 border border-[var(--border)]">5</td><td class="p-2 border border-[var(--border)]">5 - 1 = 4</td><td class="p-2 border border-[var(--border)]">4 - 4 = 0</td></tr>
+        <tr><td class="p-2 border border-[var(--border)] font-bold">P3</td><td class="p-2 border border-[var(--border)]">26</td><td class="p-2 border border-[var(--border)]">26 - 2 = 24</td><td class="p-2 border border-[var(--border)]">24 - 9 = 15</td></tr>
+        <tr><td class="p-2 border border-[var(--border)] font-bold">P4</td><td class="p-2 border border-[var(--border)]">10</td><td class="p-2 border border-[var(--border)]">10 - 3 = 7</td><td class="p-2 border border-[var(--border)]">7 - 5 = 2</td></tr>
+        <tr class="bg-[#202024] font-bold"><td colspan="2" class="p-2 border border-[var(--border)] text-right">Average:</td>
+        <td class="p-2 border border-[var(--border)] text-blue-400">52 / 4 = 13.0</td>
+        <td class="p-2 border border-[var(--border)] text-emerald-400">26 / 4 = 6.5</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to OS Index
+    </a>
+  </div>
+
+</body>
+</html>
