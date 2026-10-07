@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 1: Introduction to Operating Systems</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📘</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --background: #0f1117;
+      --foreground: #e4e4e7;
+      --card: #1a1b23;
+      --border: #2e2e3a;
+      --muted-foreground: #a1a1aa;
+      --primary: #22c55e;
+      --primary-foreground: #ffffff;
+      --secondary: #3b82f6;
+      --secondary-foreground: #ffffff;
+      --accent: #8b5cf6;
+      --content: rgba(128,128,128,0.15);
+    }
+    html, body { background: #0f1117; }
+    * { scrollbar-width: thin; scrollbar-color: #2e2e3a #0f1117; }
+    .diagram-box {
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .arrow-down::after {
+      content: '↓';
+      display: block;
+      text-align: center;
+      font-size: 20px;
+      color: var(--muted-foreground);
+      line-height: 1.2;
+    }
+    .arrow-right::after {
+      content: '→';
+      font-size: 20px;
+      color: var(--muted-foreground);
+    }
+    .highlight-box {
+      border-left: 4px solid;
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 8px 0;
+    }
+    details summary { cursor: pointer; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .chevron { transform: rotate(90deg); }
+    .chevron { display: inline-block; transition: transform 0.2s; }
+    .timeline-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .timeline-line { width: 2px; min-height: 20px; flex-shrink: 0; }
+    code { background: var(--content, rgba(128,128,128,0.15)); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-6 max-w-4xl mx-auto">
+
+  <!-- Title -->
+  <div class="text-center mb-8">
+    <div class="inline-block bg-emerald-500/10 border border-emerald-500/30 rounded-full px-4 py-1 mb-3">
+      <span class="text-emerald-500 text-sm font-semibold">📘 Module 1 of 14</span>
+    </div>
+    <h1 class="text-3xl font-bold text-[var(--foreground)]">Introduction to Operating Systems</h1>
+    <p class="text-[var(--muted-foreground)] mt-2">The what, why, and how of the most important software on your computer</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 1: What is an OS? -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">1️⃣ What is an Operating System?</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-4">Definition, purpose, and the big picture</p>
+
+    <div class="highlight-box bg-emerald-500/5 border-emerald-500 mb-4">
+      <p class="text-sm"><strong>Definition:</strong> An Operating System (OS) is a <strong>system software</strong> that acts as an intermediary between the user and the computer hardware. It manages hardware resources and provides services to application programs.</p>
+    </div>
+
+    <h3 class="font-semibold text-[var(--foreground)] mb-3 text-base">🏗️ Where does the OS sit?</h3>
+
+    <!-- Layered Architecture Diagram -->
+    <div class="flex flex-col items-center gap-0 mb-5">
+      <div class="diagram-box w-72 bg-blue-500/10 border-blue-500/40 text-blue-400">👤 User</div>
+      <div class="arrow-down"></div>
+      <div class="diagram-box w-72 bg-purple-500/10 border-purple-500/40 text-purple-400">📱 Application Programs</div>
+      <div class="text-[var(--muted-foreground)] text-xs my-0.5">System Calls ↕</div>
+      <div class="diagram-box w-72 bg-emerald-500/10 border-emerald-500/50 text-emerald-400 ring-2 ring-emerald-500/30">🖥️ Operating System (Kernel)</div>
+      <div class="arrow-down"></div>
+      <div class="diagram-box w-72 bg-orange-500/10 border-orange-500/40 text-orange-400">⚡ Computer Hardware</div>
+      <p class="text-xs text-[var(--muted-foreground)] mt-1">(CPU, Memory, Disk, I/O Devices)</p>
+    </div>
+
+    <h3 class="font-semibold text-[var(--foreground)] mb-3 text-base">🎯 Two Key Roles of an OS</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+      <div class="border border-[var(--border)] rounded-lg p-4">
+        <p class="font-semibold text-sm text-emerald-500 mb-1">1. Resource Manager</p>
+        <p class="text-sm text-[var(--muted-foreground)]">Manages CPU time, memory, disk space, and I/O devices. Decides <em>who gets what, when, and for how long</em>.</p>
+      </div>
+      <div class="border border-[var(--border)] rounded-lg p-4">
+        <p class="font-semibold text-sm text-blue-500 mb-1">2. Extended Machine (Abstraction)</p>
+        <p class="text-sm text-[var(--muted-foreground)]">Hides ugly hardware details. Instead of writing disk controller commands, you just call <code>open("file.txt")</code>.</p>
+      </div>
+    </div>
+
+    <h3 class="font-semibold text-[var(--foreground)] mb-2 text-base">📋 What does an OS do?</h3>
+    <div class="grid grid-cols-2 gap-2 text-sm">
+      <div class="flex items-center gap-2 text-[var(--muted-foreground)]"><span class="text-emerald-500">✓</span> Process Management</div>
+      <div class="flex items-center gap-2 text-[var(--muted-foreground)]"><span class="text-emerald-500">✓</span> Memory Management</div>
+      <div class="flex items-center gap-2 text-[var(--muted-foreground)]"><span class="text-emerald-500">✓</span> File System Management</div>
+      <div class="flex items-center gap-2 text-[var(--muted-foreground)]"><span class="text-emerald-500">✓</span> I/O Device Management</div>
+      <div class="flex items-center gap-2 text-[var(--muted-foreground)]"><span class="text-emerald-500">✓</span> Security & Protection</div>
+      <div class="flex items-center gap-2 text-[var(--muted-foreground)]"><span class="text-emerald-500">✓</span> Networking</div>
+    </div>
+
+    <div class="mt-4 bg-amber-500/5 border border-amber-500/30 rounded-lg p-3">
+      <p class="text-sm text-amber-400 font-semibold">🎓 Exam Tip</p>
+      <p class="text-sm text-[var(--muted-foreground)]">Q: <em>"Is the OS hardware or software?"</em> → It is <strong>system software</strong>. It's the first program loaded into memory when the computer starts (bootstrapping).</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 2: Evolution of OS -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">2️⃣ Evolution of Operating Systems</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-5">How OS evolved over decades — each generation solved a problem</p>
+
+    <!-- Timeline -->
+    <div class="space-y-0">
+      <!-- Gen 1 -->
+      <div class="flex gap-4">
+        <div class="flex flex-col items-center">
+          <div class="timeline-dot bg-gray-500"></div>
+          <div class="timeline-line bg-gray-500/30 flex-1"></div>
+        </div>
+        <div class="pb-5">
+          <p class="font-semibold text-sm text-[var(--foreground)]">🔧 Gen 0: No OS (1940s–50s)</p>
+          <p class="text-sm text-[var(--muted-foreground)]">Programs entered via switches and punch cards. One job at a time. The programmer <em>was</em> the OS.</p>
+        </div>
+      </div>
+
+      <!-- Gen 2 -->
+      <div class="flex gap-4">
+        <div class="flex flex-col items-center">
+          <div class="timeline-dot bg-orange-500"></div>
+          <div class="timeline-line bg-orange-500/30 flex-1"></div>
+        </div>
+        <div class="pb-5">
+          <p class="font-semibold text-sm text-[var(--foreground)]">📦 Batch Systems (1950s–60s)</p>
+          <p class="text-sm text-[var(--muted-foreground)]">Jobs collected in batches and executed sequentially by a <strong>resident monitor</strong>. No user interaction during execution.</p>
+          <p class="text-xs text-red-400 mt-1">❌ Problem: CPU sits idle during I/O operations (very slow)</p>
+        </div>
+      </div>
+
+      <!-- Gen 3 -->
+      <div class="flex gap-4">
+        <div class="flex flex-col items-center">
+          <div class="timeline-dot bg-blue-500"></div>
+          <div class="timeline-line bg-blue-500/30 flex-1"></div>
+        </div>
+        <div class="pb-5">
+          <p class="font-semibold text-sm text-[var(--foreground)]">🔀 Multiprogramming (1960s)</p>
+          <p class="text-sm text-[var(--muted-foreground)]">Multiple jobs loaded in memory. When one job does I/O, the CPU switches to another job. <strong>CPU never idle!</strong></p>
+          <p class="text-xs text-emerald-400 mt-1">✅ Solution: Maximized CPU utilization</p>
+          <p class="text-xs text-red-400">❌ Problem: No user interaction, no fairness guarantee</p>
+        </div>
+      </div>
+
+      <!-- Gen 4 -->
+      <div class="flex gap-4">
+        <div class="flex flex-col items-center">
+          <div class="timeline-dot bg-purple-500"></div>
+          <div class="timeline-line bg-purple-500/30 flex-1"></div>
+        </div>
+        <div class="pb-5">
+          <p class="font-semibold text-sm text-[var(--foreground)]">⏱️ Time-Sharing / Multitasking (1970s)</p>
+          <p class="text-sm text-[var(--muted-foreground)]">CPU time divided into small <strong>time slices (quantum)</strong>. Each user gets a turn, creating the illusion of simultaneous execution. E.g., <strong>UNIX</strong>.</p>
+          <p class="text-xs text-emerald-400 mt-1">✅ Solution: Interactive computing, multiple users at once</p>
+        </div>
+      </div>
+
+      <!-- Gen 5 -->
+      <div class="flex gap-4">
+        <div class="flex flex-col items-center">
+          <div class="timeline-dot bg-red-500"></div>
+          <div class="timeline-line bg-red-500/30 flex-1"></div>
+        </div>
+        <div class="pb-5">
+          <p class="font-semibold text-sm text-[var(--foreground)]">⚡ Real-Time OS (RTOS)</p>
+          <p class="text-sm text-[var(--muted-foreground)]">Guarantees response within a strict <strong>deadline</strong>. Used in missiles, medical devices, robotics.</p>
+          <div class="flex gap-3 mt-1 text-xs">
+            <span class="text-blue-400">🔵 Hard RTOS: Missing deadline = system failure</span>
+            <span class="text-amber-400">🟡 Soft RTOS: Deadline miss = degraded quality</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gen 6 -->
+      <div class="flex gap-4">
+        <div class="flex flex-col items-center">
+          <div class="timeline-dot bg-emerald-500"></div>
+        </div>
+        <div class="pb-2">
+          <p class="font-semibold text-sm text-[var(--foreground)]">☁️ Modern OS (Today)</p>
+          <p class="text-sm text-[var(--muted-foreground)]">Distributed systems, cloud OS, mobile OS, containerized environments.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 bg-blue-500/5 border border-blue-500/30 rounded-lg p-3">
+      <p class="text-sm font-semibold text-blue-400">🔑 Key Difference to Remember</p>
+      <table class="w-full text-sm text-[var(--muted-foreground)] mt-2">
+        <tr class="border-b border-[var(--border)]">
+          <td class="py-1 font-semibold">Multiprogramming</td>
+          <td class="py-1">Multiple jobs in memory, CPU switches on I/O wait. <strong>No time quantum</strong>.</td>
+        </tr>
+        <tr class="border-b border-[var(--border)]">
+          <td class="py-1 font-semibold">Multitasking</td>
+          <td class="py-1">Same as multiprogramming + <strong>time slicing</strong> (preemptive switching).</td>
+        </tr>
+        <tr>
+          <td class="py-1 font-semibold">Multiprocessing</td>
+          <td class="py-1">Multiple <strong>CPUs/cores</strong> running processes in parallel.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 3: Types of OS -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">3️⃣ Types of Operating Systems</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-4">Different OS types for different needs</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div class="border border-[var(--border)] rounded-lg p-4">
+        <p class="font-semibold text-sm mb-1">🖥️ Desktop OS</p>
+        <p class="text-xs text-[var(--muted-foreground)]">Single user, rich GUI. Focus on responsiveness.</p>
+        <p class="text-xs text-emerald-400 mt-1">Ex: Windows, macOS, Ubuntu Desktop</p>
+      </div>
+      <div class="border border-[var(--border)] rounded-lg p-4">
+        <p class="font-semibold text-sm mb-1">🏢 Server OS</p>
+        <p class="text-xs text-[var(--muted-foreground)]">Multi-user, high throughput, network services.</p>
+        <p class="text-xs text-emerald-400 mt-1">Ex: Windows Server, RHEL, Ubuntu Server</p>
+      </div>
+      <div class="border border-[var(--border)] rounded-lg p-4">
+        <p class="font-semibold text-sm mb-1">📱 Mobile OS</p>
+        <p class="text-xs text-[var(--muted-foreground)]">Touch input, power-efficient, app sandboxing.</p>
+        <p class="text-xs text-emerald-400 mt-1">Ex: Android, iOS</p>
+      </div>
+      <div class="border border-[var(--border)] rounded-lg p-4">
+        <p class="font-semibold text-sm mb-1">🔌 Embedded OS</p>
+        <p class="text-xs text-[var(--muted-foreground)]">Runs on dedicated hardware with limited resources.</p>
+        <p class="text-xs text-emerald-400 mt-1">Ex: Washing machines, ATMs, routers</p>
+      </div>
+      <div class="border border-[var(--border)] rounded-lg p-4">
+        <p class="font-semibold text-sm mb-1">⏱️ Real-Time OS</p>
+        <p class="text-xs text-[var(--muted-foreground)]">Strict timing guarantees. Deterministic scheduling.</p>
+        <p class="text-xs text-emerald-400 mt-1">Ex: VxWorks, FreeRTOS, QNX</p>
+      </div>
+      <div class="border border-[var(--border)] rounded-lg p-4">
+        <p class="font-semibold text-sm mb-1">☁️ Distributed OS</p>
+        <p class="text-xs text-[var(--muted-foreground)]">Multiple machines appear as one system.</p>
+        <p class="text-xs text-emerald-400 mt-1">Ex: Amoeba, Google's internal systems</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 4: OS Structure -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">4️⃣ OS Structure / Architecture</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-5">How the kernel itself is organized internally</p>
+
+    <!-- Monolithic -->
+    <details class="mb-4 border border-[var(--border)] rounded-lg">
+      <summary class="p-4 font-semibold text-sm flex items-center gap-2">
+        <span class="chevron">▶</span> <span class="text-orange-400">🏛️ Monolithic Kernel</span> — Everything in one big block
+      </summary>
+      <div class="px-4 pb-4">
+        <p class="text-sm text-[var(--muted-foreground)] mb-3">All OS services (file system, device drivers, memory management, scheduling) run in <strong>kernel space</strong> as a single large process.</p>
+        <div class="flex flex-col items-center gap-0 mb-3">
+          <div class="diagram-box w-64 bg-blue-500/10 border-blue-500/30 text-blue-400 text-xs">User Programs</div>
+          <div class="text-[var(--muted-foreground)] text-sm">── System Call Interface ──</div>
+          <div class="diagram-box w-64 bg-orange-500/10 border-orange-500/40 text-orange-400 text-xs py-3">
+            <div>Process Mgmt + Memory Mgmt</div>
+            <div>+ File System + Drivers + IPC</div>
+            <div class="text-[10px] mt-1 opacity-70">(All in Kernel Space)</div>
+          </div>
+          <div class="arrow-down"></div>
+          <div class="diagram-box w-64 bg-gray-500/10 border-gray-500/30 text-gray-400 text-xs">Hardware</div>
+        </div>
+        <div class="flex gap-4 text-xs">
+          <span class="text-emerald-400">✅ Fast — no mode switches between services</span>
+          <span class="text-red-400">❌ One bug can crash the entire OS</span>
+        </div>
+        <p class="text-xs text-[var(--muted-foreground)] mt-2">Examples: <strong>Linux</strong>, traditional UNIX</p>
+      </div>
+    </details>
+
+    <!-- Microkernel -->
+    <details class="mb-4 border border-[var(--border)] rounded-lg">
+      <summary class="p-4 font-semibold text-sm flex items-center gap-2">
+        <span class="chevron">▶</span> <span class="text-blue-400">🔬 Microkernel</span> — Minimal kernel, services in user space
+      </summary>
+      <div class="px-4 pb-4">
+        <p class="text-sm text-[var(--muted-foreground)] mb-3">Only essential services (IPC, basic scheduling, memory management) in kernel. Everything else (file system, drivers) runs as <strong>user-space servers</strong>.</p>
+        <div class="flex flex-col items-center gap-0 mb-3">
+          <div class="flex gap-2 justify-center">
+            <div class="diagram-box bg-purple-500/10 border-purple-500/30 text-purple-400 text-xs px-3">File Server</div>
+            <div class="diagram-box bg-purple-500/10 border-purple-500/30 text-purple-400 text-xs px-3">Device Driver</div>
+            <div class="diagram-box bg-purple-500/10 border-purple-500/30 text-purple-400 text-xs px-3">Network Server</div>
+          </div>
+          <div class="text-[var(--muted-foreground)] text-xs my-1">↕ IPC Messages ↕</div>
+          <div class="diagram-box w-48 bg-blue-500/10 border-blue-500/40 text-blue-400 text-xs py-2">
+            <div>Microkernel</div>
+            <div class="text-[10px] opacity-70">(IPC + Scheduling + Memory)</div>
+          </div>
+          <div class="arrow-down"></div>
+          <div class="diagram-box w-48 bg-gray-500/10 border-gray-500/30 text-gray-400 text-xs">Hardware</div>
+        </div>
+        <div class="flex gap-4 text-xs">
+          <span class="text-emerald-400">✅ Stable — one service crash doesn't kill OS</span>
+          <span class="text-red-400">❌ Slower — IPC overhead between services</span>
+        </div>
+        <p class="text-xs text-[var(--muted-foreground)] mt-2">Examples: <strong>MINIX</strong>, QNX, L4</p>
+      </div>
+    </details>
+
+    <!-- Hybrid -->
+    <details class="mb-4 border border-[var(--border)] rounded-lg">
+      <summary class="p-4 font-semibold text-sm flex items-center gap-2">
+        <span class="chevron">▶</span> <span class="text-emerald-400">🔄 Hybrid Kernel</span> — Best of both worlds
+      </summary>
+      <div class="px-4 pb-4">
+        <p class="text-sm text-[var(--muted-foreground)] mb-2">Microkernel design philosophy but runs some user-space services in kernel space for performance.</p>
+        <div class="flex gap-4 text-xs mb-2">
+          <span class="text-emerald-400">✅ Balances speed and modularity</span>
+        </div>
+        <p class="text-xs text-[var(--muted-foreground)]">Examples: <strong>Windows NT</strong>, macOS (XNU = Mach microkernel + BSD monolithic)</p>
+      </div>
+    </details>
+
+    <!-- Exokernel -->
+    <details class="mb-4 border border-[var(--border)] rounded-lg">
+      <summary class="p-4 font-semibold text-sm flex items-center gap-2">
+        <span class="chevron">▶</span> <span class="text-red-400">⚗️ Exokernel</span> — Minimal abstraction, max control
+      </summary>
+      <div class="px-4 pb-4">
+        <p class="text-sm text-[var(--muted-foreground)] mb-2">Kernel only handles <strong>resource protection</strong> (who owns what). Applications manage their own abstractions via <strong>library OS</strong>. Research concept.</p>
+        <div class="flex gap-4 text-xs mb-2">
+          <span class="text-emerald-400">✅ Maximum flexibility for applications</span>
+          <span class="text-red-400">❌ Very complex to program</span>
+        </div>
+        <p class="text-xs text-[var(--muted-foreground)]">Examples: MIT Exokernel (research)</p>
+      </div>
+    </details>
+
+    <div class="bg-amber-500/5 border border-amber-500/30 rounded-lg p-3">
+      <p class="text-sm font-semibold text-amber-400">🎓 GATE Favorite Comparison</p>
+      <table class="w-full text-xs text-[var(--muted-foreground)] mt-2 border-collapse">
+        <thead>
+          <tr class="border-b border-[var(--border)]">
+            <th class="text-left py-1 font-semibold">Feature</th>
+            <th class="text-left py-1 font-semibold">Monolithic</th>
+            <th class="text-left py-1 font-semibold">Microkernel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-[var(--border)]"><td class="py-1">Speed</td><td class="py-1 text-emerald-400">Fast</td><td class="py-1 text-red-400">Slower (IPC)</td></tr>
+          <tr class="border-b border-[var(--border)]"><td class="py-1">Reliability</td><td class="py-1 text-red-400">Less</td><td class="py-1 text-emerald-400">More</td></tr>
+          <tr class="border-b border-[var(--border)]"><td class="py-1">Kernel Size</td><td class="py-1">Large</td><td class="py-1">Small</td></tr>
+          <tr><td class="py-1">Example</td><td class="py-1">Linux</td><td class="py-1">MINIX</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 5: System Calls -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">5️⃣ System Calls</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-4">The programmatic interface between user programs and the OS kernel</p>
+
+    <div class="highlight-box bg-blue-500/5 border-blue-500 mb-4">
+      <p class="text-sm"><strong>Definition:</strong> A system call is a <strong>request made by a user program to the OS kernel</strong> to perform a privileged operation (like reading a file, creating a process, or allocating memory).</p>
+    </div>
+
+    <!-- How it works -->
+    <h3 class="font-semibold text-[var(--foreground)] mb-3 text-base">⚙️ How a System Call Works</h3>
+    <div class="flex flex-wrap items-center justify-center gap-2 mb-5 text-xs">
+      <div class="diagram-box bg-blue-500/10 border-blue-500/30 text-blue-400 px-3 py-2">User calls<br><code>read()</code></div>
+      <span class="arrow-right text-[var(--muted-foreground)]"></span>
+      <div class="diagram-box bg-purple-500/10 border-purple-500/30 text-purple-400 px-3 py-2">Library maps to<br>syscall number</div>
+      <span class="arrow-right text-[var(--muted-foreground)]"></span>
+      <div class="diagram-box bg-amber-500/10 border-amber-500/30 text-amber-400 px-3 py-2">Trap/Software<br>Interrupt</div>
+      <span class="arrow-right text-[var(--muted-foreground)]"></span>
+      <div class="diagram-box bg-emerald-500/10 border-emerald-500/30 text-emerald-400 px-3 py-2">Kernel executes<br>& returns result</div>
+    </div>
+
+    <!-- Categories -->
+    <h3 class="font-semibold text-[var(--foreground)] mb-3 text-base">📂 Categories of System Calls</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-[var(--muted-foreground)] border-collapse mb-4">
+        <thead>
+          <tr class="border-b-2 border-[var(--border)]">
+            <th class="text-left py-2 font-semibold text-[var(--foreground)]">Category</th>
+            <th class="text-left py-2 font-semibold text-[var(--foreground)]">Examples</th>
+            <th class="text-left py-2 font-semibold text-[var(--foreground)]">Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-[var(--border)]">
+            <td class="py-2">Process Control</td>
+            <td class="py-2"><code>fork()</code>, <code>exec()</code>, <code>exit()</code>, <code>wait()</code></td>
+            <td class="py-2">Create, terminate, and manage processes</td>
+          </tr>
+          <tr class="border-b border-[var(--border)]">
+            <td class="py-2">File Management</td>
+            <td class="py-2"><code>open()</code>, <code>read()</code>, <code>write()</code>, <code>close()</code></td>
+            <td class="py-2">Create, delete, read, write files</td>
+          </tr>
+          <tr class="border-b border-[var(--border)]">
+            <td class="py-2">Device Management</td>
+            <td class="py-2"><code>ioctl()</code>, <code>read()</code>, <code>write()</code></td>
+            <td class="py-2">Request/release devices, I/O operations</td>
+          </tr>
+          <tr class="border-b border-[var(--border)]">
+            <td class="py-2">Information</td>
+            <td class="py-2"><code>getpid()</code>, <code>time()</code>, <code>uname()</code></td>
+            <td class="py-2">Get/set system data and attributes</td>
+          </tr>
+          <tr>
+            <td class="py-2">Communication</td>
+            <td class="py-2"><code>pipe()</code>, <code>shmget()</code>, <code>socket()</code></td>
+            <td class="py-2">IPC — message passing, shared memory</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Example -->
+    <h3 class="font-semibold text-[var(--foreground)] mb-2 text-base">💻 Real Example: Creating a child process in C</h3>
+    <div class="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 font-mono text-sm overflow-x-auto mb-3">
+      <pre class="text-[var(--muted-foreground)]"><span class="text-blue-400">#include</span> &lt;stdio.h&gt;
+<span class="text-blue-400">#include</span> &lt;unistd.h&gt;
+
+<span class="text-purple-400">int</span> <span class="text-emerald-400">main</span>() {
+    <span class="text-purple-400">int</span> pid = <span class="text-amber-400">fork</span>();  <span class="text-gray-500">// System call! Creates child process</span>
+
+    <span class="text-blue-400">if</span> (pid == <span class="text-orange-400">0</span>) {
+        printf(<span class="text-emerald-400">"I am the child! PID=%d\n"</span>, <span class="text-amber-400">getpid</span>());
+    } <span class="text-blue-400">else</span> {
+        printf(<span class="text-emerald-400">"I am the parent! Child PID=%d\n"</span>, pid);
+    }
+    <span class="text-blue-400">return</span> <span class="text-orange-400">0</span>;
+}</pre>
+    </div>
+    <p class="text-xs text-[var(--muted-foreground)]">Here <code>fork()</code> and <code>getpid()</code> are system calls. <code>printf()</code> is a library function that internally uses the <code>write()</code> system call.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 6: User Mode vs Kernel Mode -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">6️⃣ User Mode vs Kernel Mode</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-4">Dual-mode operation — the foundation of OS protection</p>
+
+    <div class="highlight-box bg-purple-500/5 border-purple-500 mb-4">
+      <p class="text-sm"><strong>Why two modes?</strong> To protect the OS from buggy or malicious user programs. If any program could directly access hardware, one bad program could crash the entire system.</p>
+    </div>
+
+    <!-- Mode Comparison -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+      <div class="border-2 border-blue-500/40 rounded-lg p-4 bg-blue-500/5">
+        <h3 class="font-bold text-blue-400 text-sm mb-2">👤 User Mode (Mode bit = 1)</h3>
+        <ul class="text-sm text-[var(--muted-foreground)] space-y-1">
+          <li>• Application programs run here</li>
+          <li>• <strong>Restricted access</strong> — cannot directly access hardware or memory of other processes</li>
+          <li>• Attempting a privileged instruction → <strong>Trap</strong> (exception)</li>
+          <li>• Must use system calls for OS services</li>
+        </ul>
+      </div>
+      <div class="border-2 border-red-500/40 rounded-lg p-4 bg-red-500/5">
+        <h3 class="font-bold text-red-400 text-sm mb-2">⚙️ Kernel Mode (Mode bit = 0)</h3>
+        <ul class="text-sm text-[var(--muted-foreground)] space-y-1">
+          <li>• OS kernel runs here</li>
+          <li>• <strong>Full access</strong> — can execute any instruction, access all memory & hardware</li>
+          <li>• Can execute <strong>privileged instructions</strong> (disable interrupts, modify page tables, I/O)</li>
+          <li>• Entered via system call, interrupt, or exception</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Mode Switch Diagram -->
+    <h3 class="font-semibold text-[var(--foreground)] mb-3 text-base">🔄 Mode Switching Flow</h3>
+    <div class="flex flex-col items-center gap-1 mb-4">
+      <div class="flex items-center gap-3">
+        <div class="diagram-box bg-blue-500/10 border-blue-500/30 text-blue-400 text-xs w-40">User Process<br>Running<br><span class="text-[10px]">(mode bit = 1)</span></div>
+        <div class="text-center text-xs text-[var(--muted-foreground)]">
+          <div>── system call ──→</div>
+          <div class="text-[10px]">trap instruction</div>
+          <div class="text-[10px]">mode bit: 1 → 0</div>
+        </div>
+        <div class="diagram-box bg-red-500/10 border-red-500/30 text-red-400 text-xs w-40">Kernel Executes<br>Service<br><span class="text-[10px]">(mode bit = 0)</span></div>
+      </div>
+      <div class="text-center text-xs text-[var(--muted-foreground)] mt-1">
+        ← return from system call ← <span class="text-[10px]">(mode bit: 0 → 1)</span>
+      </div>
+    </div>
+
+    <div class="bg-amber-500/5 border border-amber-500/30 rounded-lg p-3">
+      <p class="text-sm font-semibold text-amber-400">🎓 Exam Tip</p>
+      <p class="text-sm text-[var(--muted-foreground)]">The <strong>mode bit</strong> is a hardware bit in the CPU's status register. It's set by hardware — user programs <em>cannot</em> change it directly. Only a <strong>trap</strong> (system call) or <strong>interrupt</strong> can switch from user → kernel mode.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 7: Interrupts -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">7️⃣ Interrupts & Interrupt Handling</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-4">How the CPU knows something needs attention</p>
+
+    <div class="highlight-box bg-red-500/5 border-red-500 mb-4">
+      <p class="text-sm"><strong>Definition:</strong> An interrupt is a <strong>signal to the CPU</strong> that an event has occurred and needs immediate attention. The CPU pauses current execution, handles the interrupt, then resumes.</p>
+    </div>
+
+    <!-- Types -->
+    <h3 class="font-semibold text-[var(--foreground)] mb-3 text-base">📋 Types of Interrupts</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+      <div class="border border-[var(--border)] rounded-lg p-4">
+        <p class="font-semibold text-sm text-orange-400 mb-2">⚡ Hardware Interrupts (External)</p>
+        <p class="text-sm text-[var(--muted-foreground)] mb-2">Generated by hardware devices to signal events.</p>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-1">
+          <li>• Keyboard key pressed</li>
+          <li>• Mouse moved / clicked</li>
+          <li>• Disk I/O completed</li>
+          <li>• Timer interrupt (clock tick)</li>
+          <li>• Network packet arrived</li>
+        </ul>
+      </div>
+      <div class="border border-[var(--border)] rounded-lg p-4">
+        <p class="font-semibold text-sm text-purple-400 mb-2">🖥️ Software Interrupts (Internal)</p>
+        <p class="text-sm text-[var(--muted-foreground)] mb-2">Generated by programs intentionally or by errors.</p>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-1">
+          <li>• <strong>Trap</strong> — System call (intentional)</li>
+          <li>• <strong>Exception</strong> — Division by zero</li>
+          <li>• <strong>Fault</strong> — Page fault (recoverable)</li>
+          <li>• <strong>Abort</strong> — Hardware failure (unrecoverable)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Interrupt Handling Flow -->
+    <h3 class="font-semibold text-[var(--foreground)] mb-3 text-base">🔄 Interrupt Handling Steps</h3>
+    <div class="space-y-2 mb-4">
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center flex-shrink-0">1</div>
+        <p class="text-sm text-[var(--muted-foreground)]"><strong>Interrupt occurs</strong> — device sends signal on the interrupt line</p>
+      </div>
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center flex-shrink-0">2</div>
+        <p class="text-sm text-[var(--muted-foreground)]"><strong>CPU saves state</strong> — pushes PC (program counter), registers onto stack</p>
+      </div>
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center flex-shrink-0">3</div>
+        <p class="text-sm text-[var(--muted-foreground)]"><strong>CPU looks up ISR</strong> — uses the <strong>Interrupt Vector Table (IVT)</strong> to find the address of the Interrupt Service Routine</p>
+      </div>
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center flex-shrink-0">4</div>
+        <p class="text-sm text-[var(--muted-foreground)]"><strong>ISR executes</strong> — handles the event (e.g., reads keyboard buffer)</p>
+      </div>
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center flex-shrink-0">5</div>
+        <p class="text-sm text-[var(--muted-foreground)]"><strong>State restored</strong> — CPU pops saved registers, resumes interrupted process</p>
+      </div>
+    </div>
+
+    <div class="bg-blue-500/5 border border-blue-500/30 rounded-lg p-3 mb-4">
+      <p class="text-sm font-semibold text-blue-400">🔑 Interrupt Vector Table (IVT)</p>
+      <p class="text-sm text-[var(--muted-foreground)]">A table stored in memory that maps each <strong>interrupt number</strong> → address of its <strong>handler (ISR)</strong>. Like a phone directory: "interrupt 14 → call the page fault handler".</p>
+    </div>
+
+    <div class="bg-amber-500/5 border border-amber-500/30 rounded-lg p-3">
+      <p class="text-sm font-semibold text-amber-400">🎓 Key Points for Exams</p>
+      <ul class="text-sm text-[var(--muted-foreground)] space-y-1 mt-1">
+        <li>• Interrupts are the basis of <strong>modern OS design</strong> — without them, the CPU would have to constantly poll devices (wasteful)</li>
+        <li>• <strong>Timer interrupt</strong> is what makes preemptive multitasking possible — it fires periodically to give the OS a chance to switch processes</li>
+        <li>• Trap ≠ Interrupt: A trap is <em>synchronous</em> (caused by the program), an interrupt is <em>asynchronous</em> (caused by external device)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- PRACTICE QUESTIONS -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-4">🧪 Practice Questions — Test Yourself!</h2>
+
+    <div class="space-y-4">
+      <!-- Q1 -->
+      <details class="border border-[var(--border)] rounded-lg">
+        <summary class="p-3 font-semibold text-sm cursor-pointer">
+          <span class="chevron">▶</span> Q1: What is the key difference between multiprogramming and time-sharing?
+        </summary>
+        <div class="px-4 pb-3 text-sm text-[var(--muted-foreground)]">
+          <strong class="text-emerald-400">Answer:</strong> Both keep multiple jobs in memory. <strong>Multiprogramming</strong> switches the CPU to another job only when the current job does I/O (non-preemptive). <strong>Time-sharing</strong> forcefully switches using a <strong>timer interrupt</strong> after a fixed time quantum (preemptive), ensuring interactive response for all users.
+        </div>
+      </details>
+
+      <!-- Q2 -->
+      <details class="border border-[var(--border)] rounded-lg">
+        <summary class="p-3 font-semibold text-sm cursor-pointer">
+          <span class="chevron">▶</span> Q2: Why can't a user program directly execute a privileged instruction like disabling interrupts?
+        </summary>
+        <div class="px-4 pb-3 text-sm text-[var(--muted-foreground)]">
+          <strong class="text-emerald-400">Answer:</strong> Because the CPU runs user programs in <strong>User Mode (mode bit = 1)</strong>. Privileged instructions can only execute in <strong>Kernel Mode (mode bit = 0)</strong>. If a user program tries, the CPU generates a <strong>trap</strong> (exception), and the OS typically terminates the offending process.
+        </div>
+      </details>
+
+      <!-- Q3 -->
+      <details class="border border-[var(--border)] rounded-lg">
+        <summary class="p-3 font-semibold text-sm cursor-pointer">
+          <span class="chevron">▶</span> Q3: In a microkernel OS, how do the file system and device drivers communicate?
+        </summary>
+        <div class="px-4 pb-3 text-sm text-[var(--muted-foreground)]">
+          <strong class="text-emerald-400">Answer:</strong> Through <strong>Inter-Process Communication (IPC) via message passing</strong> through the microkernel. Since both run as user-space servers, they can't call each other directly. This adds overhead but improves reliability — if the file system crashes, the kernel and other services keep running.
+        </div>
+      </details>
+
+      <!-- Q4 -->
+      <details class="border border-[var(--border)] rounded-lg">
+        <summary class="p-3 font-semibold text-sm cursor-pointer">
+          <span class="chevron">▶</span> Q4: What happens when you call <code>printf("Hello")</code> in C?
+        </summary>
+        <div class="px-4 pb-3 text-sm text-[var(--muted-foreground)]">
+          <strong class="text-emerald-400">Answer:</strong> <code>printf()</code> is a <strong>library function</strong> (not a system call). Internally, it formats the string, then invokes the <code>write()</code> <strong>system call</strong> to send the data to stdout (file descriptor 1). The <code>write()</code> call traps into the kernel, which handles the actual I/O to the screen.
+        </div>
+      </details>
+
+      <!-- Q5 -->
+      <details class="border border-[var(--border)] rounded-lg">
+        <summary class="p-3 font-semibold text-sm cursor-pointer">
+          <span class="chevron">▶</span> Q5: Why is the timer interrupt critical for an OS?
+        </summary>
+        <div class="px-4 pb-3 text-sm text-[var(--muted-foreground)]">
+          <strong class="text-emerald-400">Answer:</strong> The timer interrupt fires at regular intervals, giving control back to the OS. Without it, a user process could run forever and <strong>never return control to the OS</strong> (infinite loop). It enables: (1) <strong>Preemptive scheduling</strong> — OS can switch processes, (2) <strong>Time-sharing</strong> — fair CPU distribution, (3) <strong>OS keeps running</strong> — prevents system hangs.
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Summary Card -->
+  <div class="bg-emerald-500/5 border-2 border-emerald-500/30 rounded-xl p-6 mb-6">
+    <h2 class="text-lg font-bold text-emerald-400 mb-3">✅ Module 1 Summary — Key Takeaways</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-[var(--muted-foreground)]">
+      <div>• OS = Resource Manager + Abstraction Layer</div>
+      <div>• Evolution: Batch → Multiprogramming → Time-sharing</div>
+      <div>• Monolithic = fast but risky; Microkernel = safe but slow</div>
+      <div>• System calls = bridge from user space to kernel</div>
+      <div>• Mode bit protects the OS from user programs</div>
+      <div>• Interrupts let hardware notify the CPU asynchronously</div>
+      <div>• Timer interrupt = the heartbeat of preemptive multitasking</div>
+      <div>• IVT maps interrupt numbers to handler addresses</div>
+    </div>
+  </div>
+
+  <!-- Next Steps -->
+  <div class="text-center text-sm text-[var(--muted-foreground)] pb-4">
+    <p class="font-semibold text-[var(--foreground)]">🎉 Module 1 Complete!</p>
+    <p class="mt-1">Next up → <strong>Module 2: Process Management — Fundamentals</strong> (Processes, Threads, PCB, Context Switching)</p>
+    <p class="mt-1">Say <strong>"Next"</strong> to continue, or ask me to deep-dive into any topic!</p>
+  </div>
+
+</body>
+</html>

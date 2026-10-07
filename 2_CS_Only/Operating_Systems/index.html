@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operating Systems | GATE Preparation</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖥️</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .module-card { display: flex; flex-direction: column; padding: 1.5rem; background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; transition: all 0.2s ease; text-decoration: none; color: inherit; height: 100%; }
+    .module-card:hover { transform: translateY(-3px); border-color: #10b981; box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1); background: #1a1c23; }
+    .status-badge { font-size: 0.7rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
+    .status-done { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .status-pending { background: rgba(161, 161, 170, 0.1); color: var(--muted-foreground); }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-6xl mx-auto">
+
+  <!-- Breadcrumb / Back Navigation -->
+  <div class="mb-8">
+    <a href="../../GATE_Dashboard.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to Master Dashboard
+    </a>
+  </div>
+
+  <!-- Header -->
+  <div class="mb-12 border-b border-[var(--border)] pb-8">
+    <div class="flex items-center gap-3 mb-2">
+      <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs font-bold uppercase tracking-wider">CS / IT Core Subject</span>
+    </div>
+    <h1 class="text-4xl font-extrabold mb-3 text-white">Operating Systems</h1>
+    <p class="text-lg text-[var(--muted-foreground)] max-w-2xl">Master process management, CPU scheduling, synchronization, deadlocks, and memory management for GATE.</p>
+  </div>
+
+  <!-- Modules Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    
+    <!-- Module 1 -->
+    <a href="Module_01_Introduction.html" class="module-card">
+      <div class="flex justify-between items-start mb-4">
+        <span class="text-4xl">📘</span>
+        <span class="status-badge status-done">Completed</span>
+      </div>
+      <h3 class="text-lg font-bold mb-2">Module 1: Introduction</h3>
+      <p class="text-sm text-[var(--muted-foreground)] mb-4 flex-grow">OS types, Monolithic vs Microkernel architecture, System calls (fork, read), Dual-mode operation, and Interrupts.</p>
+    </a>
+
+    <!-- Module 2 -->
+    <a href="Module_02_Process_Management.html" class="module-card">
+      <div class="flex justify-between items-start mb-4">
+        <span class="text-4xl">⚙️</span>
+        <span class="status-badge status-done">Completed</span>
+      </div>
+      <h3 class="text-lg font-bold mb-2">Module 2: Process Management</h3>
+      <p class="text-sm text-[var(--muted-foreground)] mb-4 flex-grow">Process State Diagram, PCB, Context Switching overhead, process creation trees, and Threads (User vs Kernel).</p>
+    </a>
+
+    <!-- Module 3 (Placeholder) -->
+    <div class="module-card opacity-60 border-dashed hover:transform-none hover:border-[var(--border)] hover:bg-[var(--card)] hover:shadow-none cursor-not-allowed">
+      <div class="flex justify-between items-start mb-4">
+        <span class="text-4xl text-gray-600">⏱️</span>
+        <span class="status-badge status-pending">Pending</span>
+      </div>
+      <h3 class="text-lg font-bold mb-2 text-gray-400">Module 3: CPU Scheduling</h3>
+      <p class="text-sm text-[var(--muted-foreground)] mb-4 flex-grow">FCFS, SJF, SRTF, Round Robin, Priority Scheduling, and Gantt chart numericals.</p>
+    </div>
+
+    <!-- Future Placeholders... -->
+    <div class="module-card opacity-60 border-dashed hover:transform-none hover:border-[var(--border)] hover:bg-[var(--card)] hover:shadow-none cursor-not-allowed">
+      <div class="flex justify-between items-start mb-4">
+        <span class="text-4xl text-gray-600">🔒</span>
+        <span class="status-badge status-pending">Pending</span>
+      </div>
+      <h3 class="text-lg font-bold mb-2 text-gray-400">Module 4: Synchronization</h3>
+      <p class="text-sm text-[var(--muted-foreground)] mb-4 flex-grow">Critical section problem, Peterson's solution, Semaphores, and Mutex locks.</p>
+    </div>
+
+  </div>
+
+</body>
+</html>

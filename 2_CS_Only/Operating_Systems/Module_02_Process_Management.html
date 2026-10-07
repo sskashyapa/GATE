@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 2: Process Management - Fundamentals</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --background: #0f1117;
+      --foreground: #e4e4e7;
+      --card: #1a1b23;
+      --border: #2e2e3a;
+      --muted-foreground: #a1a1aa;
+      --primary: #22c55e;
+      --primary-foreground: #ffffff;
+      --secondary: #3b82f6;
+      --secondary-foreground: #ffffff;
+      --accent: #8b5cf6;
+      --content: rgba(128,128,128,0.15);
+    }
+    html, body { background: #0f1117; color: var(--foreground); }
+    * { scrollbar-width: thin; scrollbar-color: #2e2e3a #0f1117; }
+    .diagram-box {
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      background: rgba(59, 130, 246, 0.1); /* blue tint */
+      color: #60a5fa;
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+    .arrow-right::after { content: '→'; font-size: 24px; color: var(--muted-foreground); margin: 0 10px; }
+    .arrow-down::after { content: '↓'; display: block; font-size: 24px; color: var(--muted-foreground); text-align: center; }
+    .highlight-box { border-left: 4px solid; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 8px 0; }
+    details summary { cursor: pointer; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .chevron { transform: rotate(90deg); }
+    .chevron { display: inline-block; transition: transform 0.2s; }
+    code { background: var(--content); padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #fbbf24; }
+    
+    /* Process State Diagram specific */
+    .state-node {
+      border: 2px solid var(--border);
+      border-radius: 30px;
+      padding: 10px 20px;
+      font-weight: bold;
+      text-align: center;
+      position: relative;
+    }
+    .edge-label { font-size: 11px; color: var(--muted-foreground); background: var(--card); padding: 0 4px; }
+  </style>
+</head>
+<body class="antialiased p-6 max-w-5xl mx-auto">
+
+  <!-- Title -->
+  <div class="text-center mb-10">
+    <div class="inline-block bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-1 mb-3">
+      <span class="text-blue-400 text-sm font-semibold">⚙️ Module 2 of 14</span>
+    </div>
+    <h1 class="text-3xl font-bold text-[var(--foreground)]">Process Management — Fundamentals</h1>
+    <p class="text-[var(--muted-foreground)] mt-2">The life cycle of programs in execution</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 1: Program vs Process -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">1️⃣ Program vs. Process</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <div class="border border-[var(--border)] rounded-lg p-4 bg-gray-500/5">
+        <h3 class="font-bold text-gray-400 text-sm mb-2">📄 Program</h3>
+        <ul class="text-sm text-[var(--muted-foreground)] space-y-2">
+          <li>• <strong>Static Entity:</strong> Just a file residing on disk (e.g., <code>chrome.exe</code>, <code>script.py</code>).</li>
+          <li>• Takes up disk space, not RAM.</li>
+          <li>• Passive state of instructions.</li>
+        </ul>
+      </div>
+      <div class="border-2 border-emerald-500/30 rounded-lg p-4 bg-emerald-500/5">
+        <h3 class="font-bold text-emerald-400 text-sm mb-2">⚙️ Process</h3>
+        <ul class="text-sm text-[var(--muted-foreground)] space-y-2">
+          <li>• <strong>Dynamic Entity:</strong> A program in execution.</li>
+          <li>• Resides in Main Memory (RAM).</li>
+          <li>• Active: Needs CPU, memory, and resources to run.</li>
+          <li>• *One program can have multiple processes* (e.g., opening 5 Chrome tabs).</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="highlight-box bg-purple-500/5 border-purple-500 mt-4">
+      <p class="text-sm"><strong>Process Memory Layout:</strong> When a process is loaded into RAM, it consists of 4 main sections:</p>
+      <ul class="text-sm text-[var(--muted-foreground)] list-disc ml-5 mt-2">
+        <li><span class="text-purple-400 font-semibold">Text Section:</span> Compiled code/instructions.</li>
+        <li><span class="text-blue-400 font-semibold">Data Section:</span> Global and static variables.</li>
+        <li><span class="text-orange-400 font-semibold">Heap:</span> Dynamically allocated memory during runtime (e.g., <code>malloc()</code> or <code>new</code>). Grows upward.</li>
+        <li><span class="text-emerald-400 font-semibold">Stack:</span> Temporary data like function parameters, return addresses, and local variables. Grows downward.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 2: Process States -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">2️⃣ Process State Diagram (The 5-State Model)</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-6">As a process executes, it changes state.</p>
+
+    <!-- Visual State Diagram -->
+    <div class="flex flex-col items-center mb-8 relative p-4 bg-[#0a0c10] border border-[var(--border)] rounded-lg overflow-x-auto">
+      
+      <!-- Top Row -->
+      <div class="flex items-center justify-center min-w-[700px]">
+        <div class="state-node text-gray-400 border-gray-600">NEW<br><span class="text-[10px] font-normal">Being created</span></div>
+        
+        <div class="flex flex-col items-center mx-2 w-20">
+          <span class="edge-label mb-1">Admitted</span>
+          <div class="h-[2px] w-full bg-[var(--muted-foreground)] relative">
+            <div class="absolute right-0 top-[-4px] border-[5px] border-transparent border-l-[var(--muted-foreground)]"></div>
+          </div>
+        </div>
+        
+        <div class="state-node text-blue-400 border-blue-500">READY<br><span class="text-[10px] font-normal">Waiting for CPU</span></div>
+        
+        <div class="flex flex-col justify-center mx-2 w-32 relative h-10">
+          <!-- Dispatch (Ready -> Running) -->
+          <div class="absolute top-1 w-full text-center">
+            <span class="edge-label">Scheduler Dispatch →</span>
+          </div>
+          <!-- Interrupt (Running -> Ready) -->
+          <div class="absolute bottom-1 w-full text-center">
+            <span class="edge-label">← Interrupt (Time run out)</span>
+          </div>
+          <!-- Lines -->
+          <div class="absolute top-4 left-0 h-[2px] w-full bg-blue-500/50">
+            <div class="absolute right-0 top-[-4px] border-[5px] border-transparent border-l-blue-500/50"></div>
+          </div>
+          <div class="absolute bottom-4 left-0 h-[2px] w-full bg-blue-500/50">
+            <div class="absolute left-0 top-[-4px] border-[5px] border-transparent border-r-blue-500/50"></div>
+          </div>
+        </div>
+        
+        <div class="state-node text-emerald-400 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]">RUNNING<br><span class="text-[10px] font-normal">Instructions executing</span></div>
+        
+        <div class="flex flex-col items-center mx-2 w-20">
+          <span class="edge-label mb-1">Exit</span>
+          <div class="h-[2px] w-full bg-[var(--muted-foreground)] relative">
+            <div class="absolute right-0 top-[-4px] border-[5px] border-transparent border-l-[var(--muted-foreground)]"></div>
+          </div>
+        </div>
+        
+        <div class="state-node text-red-400 border-red-500">TERMINATED<br><span class="text-[10px] font-normal">Execution finished</span></div>
+      </div>
+
+      <!-- Bottom Row -->
+      <div class="flex items-center justify-center min-w-[700px] mt-6 relative">
+        <div class="absolute left-[300px] right-[200px] flex justify-between items-start h-20">
+          <!-- I/O Completion (Waiting -> Ready) -->
+          <div class="flex flex-col items-center w-32 relative h-full">
+            <div class="h-full w-[2px] bg-orange-500/50 absolute left-10 bottom-0">
+               <div class="absolute top-0 left-[-4px] border-[5px] border-transparent border-b-orange-500/50"></div>
+            </div>
+            <span class="edge-label absolute top-10 left-12 whitespace-nowrap">↑ I/O Completion</span>
+          </div>
+
+          <div class="state-node text-orange-400 border-orange-500 mt-16 z-10 bg-[#0a0c10]">WAITING / BLOCKED<br><span class="text-[10px] font-normal">Waiting for I/O</span></div>
+
+          <!-- I/O Request (Running -> Waiting) -->
+          <div class="flex flex-col items-center w-32 relative h-full">
+            <div class="h-full w-[2px] bg-orange-500/50 absolute right-10 bottom-0">
+              <div class="absolute bottom-0 left-[-4px] border-[5px] border-transparent border-t-orange-500/50"></div>
+            </div>
+            <span class="edge-label absolute top-10 right-14 whitespace-nowrap">I/O Request ↓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-amber-500/5 border border-amber-500/30 rounded-lg p-3">
+      <p class="text-sm font-semibold text-amber-400">🎓 GATE Important Facts:</p>
+      <ul class="text-sm text-[var(--muted-foreground)] mt-2 space-y-1 list-disc pl-5">
+        <li><strong>Multiprogramming Degree:</strong> Determined by the number of processes in the <strong>READY</strong> state + RUNNING state.</li>
+        <li><strong>Suspended States:</strong> Sometimes OS swaps out processes to disk due to low RAM. This creates two extra states: <strong>Suspend-Ready</strong> and <strong>Suspend-Wait</strong>.</li>
+        <li>On a single-core CPU, only <strong>ONE</strong> process can be in the RUNNING state at any exact microsecond.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 3: Process Control Block (PCB) -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">3️⃣ Process Control Block (PCB)</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-4">The OS's data structure to keep track of a process. Also called <em>Task Control Block</em>.</p>
+
+    <div class="flex flex-col md:flex-row gap-6 items-center">
+      <!-- PCB Diagram -->
+      <div class="w-48 border-2 border-emerald-500/30 rounded flex flex-col bg-[#0a0c10] text-sm overflow-hidden flex-shrink-0 shadow-lg shadow-emerald-500/10">
+        <div class="bg-emerald-500/20 text-emerald-400 font-bold p-2 text-center border-b border-emerald-500/30">PCB (Process 1)</div>
+        <div class="p-2 border-b border-[var(--border)] text-gray-300">Process State <span class="float-right text-xs text-emerald-400">Running</span></div>
+        <div class="p-2 border-b border-[var(--border)] text-gray-300">Process ID (PID) <span class="float-right text-xs text-blue-400">#4092</span></div>
+        <div class="p-2 border-b border-[var(--border)] text-gray-300">Program Counter <span class="float-right text-xs text-orange-400">0x00A4F</span></div>
+        <div class="p-2 border-b border-[var(--border)] text-gray-300">CPU Registers</div>
+        <div class="p-2 border-b border-[var(--border)] text-gray-300">CPU Scheduling Info <span class="text-[10px] text-[var(--muted-foreground)] block">Priority, queues</span></div>
+        <div class="p-2 border-b border-[var(--border)] text-gray-300">Memory Limits <span class="text-[10px] text-[var(--muted-foreground)] block">Page tables, limits</span></div>
+        <div class="p-2 text-gray-300">List of Open Files <span class="text-[10px] text-[var(--muted-foreground)] block">File Descriptors</span></div>
+      </div>
+
+      <!-- Description -->
+      <div class="flex-1 space-y-3 text-sm text-[var(--muted-foreground)]">
+        <p><strong class="text-emerald-400">Program Counter (PC):</strong> Points to the next instruction to be executed for this specific process. Vital for resuming execution after an interrupt.</p>
+        <p><strong class="text-blue-400">CPU Registers:</strong> When a process is paused, contents of all CPU registers (accumulators, index registers) are saved here.</p>
+        <p><strong class="text-orange-400">Where is PCB stored?</strong> The OS stores PCBs in a <strong>Process Table</strong> (an array or linked list) in Kernel Memory.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 4: Context Switching -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">4️⃣ Context Switching</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-4">Switching the CPU to another process requires performing a state save of the current process and a state restore of a different process.</p>
+
+    <!-- Context Switch Timeline -->
+    <div class="bg-[#0a0c10] border border-[var(--border)] rounded p-4 mb-4 font-mono text-xs text-center flex">
+      <div class="w-1/3 text-blue-400 border-r border-[var(--border)]">
+        <div class="font-bold mb-2 pb-1 border-b border-blue-500/30">Process P0</div>
+        <div>Executing</div>
+        <div>...</div>
+        <div class="text-orange-400 font-bold mt-2">Interrupt or System Call</div>
+        <div class="mt-4 text-[var(--muted-foreground)] border border-[var(--border)] p-1 rounded bg-[var(--card)]">Save state into PCB0</div>
+        <div class="mt-4 h-16 border-l-2 border-dashed border-gray-600 ml-auto mr-auto w-0"></div>
+        <div class="mt-4 text-[var(--muted-foreground)] border border-[var(--border)] p-1 rounded bg-[var(--card)]">Reload state from PCB0</div>
+        <div class="text-emerald-400 font-bold mt-2">Execution Resumes</div>
+        <div>...</div>
+      </div>
+      
+      <div class="w-1/3 text-gray-400 flex flex-col items-center">
+        <div class="font-bold w-full mb-2 pb-1 border-b border-[var(--border)]">Operating System</div>
+        <div class="mt-14 w-full">↓</div>
+        <div class="text-purple-400 w-full mt-2 bg-purple-500/10 border border-purple-500/30 p-2 rounded">Context Switch Time<br>(Pure Overhead)</div>
+        <div class="mt-2 w-full">↓</div>
+        <div class="mt-8 text-purple-400 w-full bg-purple-500/10 border border-purple-500/30 p-2 rounded">Context Switch Time</div>
+        <div class="mt-2 w-full">↓</div>
+      </div>
+      
+      <div class="w-1/3 text-emerald-400 border-l border-[var(--border)]">
+        <div class="font-bold mb-2 pb-1 border-b border-emerald-500/30">Process P1</div>
+        <div class="h-20"></div>
+        <div class="mt-10 text-[var(--muted-foreground)] border border-[var(--border)] p-1 rounded bg-[var(--card)]">Reload state from PCB1</div>
+        <div class="text-emerald-400 font-bold mt-2">Executing</div>
+        <div>...</div>
+        <div class="text-orange-400 font-bold mt-2">Interrupt or System Call</div>
+        <div class="mt-4 text-[var(--muted-foreground)] border border-[var(--border)] p-1 rounded bg-[var(--card)]">Save state into PCB1</div>
+      </div>
+    </div>
+
+    <div class="highlight-box bg-red-500/5 border-red-500 text-sm text-[var(--muted-foreground)]">
+      <span class="text-red-400 font-bold">⚠️ Pure Overhead:</span> The system does <strong>no useful work</strong> while switching. Its speed depends heavily on memory speed, number of registers, and hardware support (e.g., some CPUs have multiple sets of registers to switch instantly).
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 5: Process Creation & fork() -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">5️⃣ Process Creation: fork()</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-4">How UNIX-based systems create new processes.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <p class="text-sm text-[var(--muted-foreground)] mb-3">When <code>fork()</code> is called, the OS creates a <strong>Child Process</strong> that is an exact duplicate of the <strong>Parent Process</strong> (duplicate memory, PCB, open files).</p>
+        
+        <div class="bg-[#0a0c10] p-3 rounded border border-[var(--border)] text-sm font-mono text-gray-300 overflow-x-auto">
+          int pid = fork();<br><br>
+          <span class="text-gray-500">// fork returns DIFFERENT values to each:</span><br>
+          if (pid < 0) <span class="text-red-400">/* Error */</span><br>
+          if (pid == 0) <span class="text-emerald-400">/* I am the CHILD */</span><br>
+          if (pid > 0) <span class="text-blue-400">/* I am the PARENT (pid = child's ID) */</span>
+        </div>
+      </div>
+      
+      <div class="bg-blue-500/5 p-4 rounded-lg border border-blue-500/30 text-sm">
+        <h3 class="font-bold text-blue-400 mb-2">🎓 GATE Math Shortcut: fork() Trees</h3>
+        <p class="text-[var(--muted-foreground)] mb-2">If a program calls <code>fork()</code> <strong>n</strong> times sequentially in a loop:</p>
+        <ul class="list-disc ml-5 text-gray-300 font-mono space-y-1">
+          <li>Total processes created = <strong class="text-emerald-400">2ⁿ</strong></li>
+          <li>Number of CHILD processes = <strong class="text-orange-400">2ⁿ - 1</strong></li>
+        </ul>
+        <div class="mt-3 text-xs text-[var(--muted-foreground)] border-t border-blue-500/30 pt-2">
+          <strong>Example:</strong><br>
+          <code>fork(); fork(); fork();</code><br>
+          Total processes = 2³ = 8. (1 parent + 7 children).
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-4 flex gap-2 flex-wrap text-xs font-mono">
+      <div class="bg-[var(--background)] px-3 py-2 rounded border border-[var(--border)]"><span class="text-purple-400 font-bold">exec():</span> Replaces process memory with a brand new program.</div>
+      <div class="bg-[var(--background)] px-3 py-2 rounded border border-[var(--border)]"><span class="text-purple-400 font-bold">wait():</span> Parent pauses to wait for child to finish.</div>
+      <div class="bg-[var(--background)] px-3 py-2 rounded border border-[var(--border)]"><span class="text-purple-400 font-bold">exit():</span> Terminates process, frees resources.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOPIC 6: Threads (Lightweight Processes) -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-1">6️⃣ Threads & Multithreading</h2>
+    <p class="text-[var(--muted-foreground)] text-sm mb-4">A thread is a basic unit of CPU utilization (Lightweight Process).</p>
+
+    <div class="flex flex-col md:flex-row gap-6">
+      <div class="flex-1 overflow-x-auto">
+        <table class="w-full text-sm text-[var(--muted-foreground)] border-collapse mb-4">
+          <thead>
+            <tr class="border-b-2 border-[var(--border)]">
+              <th class="text-left py-2 font-semibold text-[var(--foreground)] w-1/3 min-w-[150px]">Item</th>
+              <th class="text-center py-2 font-semibold text-emerald-400">Shared across threads</th>
+              <th class="text-center py-2 font-semibold text-orange-400">Private per thread</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[var(--border)]">
+              <td class="py-2">Code (Text) Section</td><td class="text-center py-2 text-emerald-400">✅</td><td class="text-center py-2"></td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="py-2">Data Section (Globals)</td><td class="text-center py-2 text-emerald-400">✅</td><td class="text-center py-2"></td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="py-2">Open Files</td><td class="text-center py-2 text-emerald-400">✅</td><td class="text-center py-2"></td>
+            </tr>
+            <tr class="border-b border-[var(--border)] bg-gray-500/5">
+              <td class="py-2 font-bold text-[var(--foreground)]">Registers</td><td class="text-center py-2"></td><td class="text-center py-2 text-orange-400">✅</td>
+            </tr>
+            <tr class="border-b border-[var(--border)] bg-gray-500/5">
+              <td class="py-2 font-bold text-[var(--foreground)]">Stack</td><td class="text-center py-2"></td><td class="text-center py-2 text-orange-400">✅</td>
+            </tr>
+            <tr class="bg-gray-500/5">
+              <td class="py-2 font-bold text-[var(--foreground)]">Program Counter</td><td class="text-center py-2"></td><td class="text-center py-2 text-orange-400">✅</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <h3 class="font-semibold text-[var(--foreground)] mt-4 mb-3 text-base">User vs Kernel Threads</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="border border-[var(--border)] p-4 rounded-lg bg-[var(--background)]">
+        <h4 class="font-bold text-blue-400 mb-2">User-Level Threads</h4>
+        <ul class="text-sm text-[var(--muted-foreground)] space-y-1 list-disc pl-5">
+          <li>Managed entirely by user-space library (e.g., POSIX pthreads).</li>
+          <li>OS kernel doesn't know about them.</li>
+          <li>Fast context switch (no mode switch).</li>
+          <li><span class="text-red-400 font-semibold">Drawback:</span> If one thread blocks on I/O, the kernel blocks the entire process (all threads halt).</li>
+        </ul>
+      </div>
+      <div class="border border-[var(--border)] p-4 rounded-lg bg-[var(--background)]">
+        <h4 class="font-bold text-emerald-400 mb-2">Kernel-Level Threads</h4>
+        <ul class="text-sm text-[var(--muted-foreground)] space-y-1 list-disc pl-5">
+          <li>Managed by the OS natively (Windows, Linux).</li>
+          <li>Slower context switch (requires mode switch to Kernel mode).</li>
+          <li><span class="text-emerald-400 font-semibold">Advantage:</span> If one thread blocks, OS can schedule another thread from the same process. Multiprocessing is possible.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- PRACTICE QUESTIONS -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-[var(--foreground)] mb-4">🧪 Practice Questions (GATE Focus)</h2>
+
+    <div class="space-y-4">
+      <!-- Q1 -->
+      <details class="border border-[var(--border)] rounded-lg">
+        <summary class="p-3 font-semibold text-sm cursor-pointer bg-gray-500/5">
+          <span class="chevron">▶</span> Q1: Consider a program with the following code snippet. How many child processes are created?
+          <div class="mt-2 font-mono text-xs bg-[#0a0c10] p-2 rounded text-gray-300">
+            int main() {<br>
+            &nbsp;&nbsp;fork();<br>
+            &nbsp;&nbsp;fork();<br>
+            &nbsp;&nbsp;fork();<br>
+            &nbsp;&nbsp;return 0;<br>
+            }
+          </div>
+        </summary>
+        <div class="px-4 pb-3 text-sm text-[var(--muted-foreground)] border-t border-[var(--border)] pt-3">
+          <strong class="text-emerald-400">Answer: 7</strong><br>
+          Using the formula for `n` consecutive forks: Number of child processes = 2ⁿ - 1. Here n=3, so 2³ - 1 = 8 - 1 = 7 child processes. The total number of processes is 8.
+        </div>
+      </details>
+
+      <!-- Q2 -->
+      <details class="border border-[var(--border)] rounded-lg">
+        <summary class="p-3 font-semibold text-sm cursor-pointer bg-gray-500/5">
+          <span class="chevron">▶</span> Q2: Which of the following state transitions is NOT valid?
+          <ul class="list-disc ml-8 mt-1 font-normal text-xs text-gray-300 space-y-1">
+             <li>A) Ready → Running</li>
+             <li>B) Running → Ready</li>
+             <li>C) Waiting → Running</li>
+             <li>D) Running → Waiting</li>
+          </ul>
+        </summary>
+        <div class="px-4 pb-3 text-sm text-[var(--muted-foreground)] border-t border-[var(--border)] pt-3">
+          <strong class="text-emerald-400">Answer: C (Waiting → Running)</strong><br>
+          A process in the Waiting (Blocked) state must first return to the <strong>Ready</strong> state when its I/O completes. It must then wait for the CPU scheduler to pick it before it can move to Running.
+        </div>
+      </details>
+
+      <!-- Q3 -->
+      <details class="border border-[var(--border)] rounded-lg">
+        <summary class="p-3 font-semibold text-sm cursor-pointer bg-gray-500/5">
+          <span class="chevron">▶</span> Q3: Which of the following components of program state are shared across threads in a multithreaded process?
+          <ul class="list-disc ml-8 mt-1 font-normal text-xs text-gray-300 space-y-1">
+             <li>I. Register values</li>
+             <li>II. Heap memory</li>
+             <li>III. Global variables</li>
+             <li>IV. Stack memory</li>
+          </ul>
+        </summary>
+        <div class="px-4 pb-3 text-sm text-[var(--muted-foreground)] border-t border-[var(--border)] pt-3">
+          <strong class="text-emerald-400">Answer: II and III only</strong><br>
+          Threads within the same process share the Text (code), Data (global variables), and Heap memory. Each thread has its own <strong>private Stack and Registers</strong> (including the Program Counter) to keep track of its specific function calls and execution point.
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="text-center text-sm text-[var(--muted-foreground)] pb-8">
+    <p class="font-semibold text-[var(--foreground)]">🎉 Module 2 Complete!</p>
+    <p class="mt-1">Next up → <strong>Module 3: CPU Scheduling</strong> (FCFS, SJF, Round Robin — Get your calculator ready!)</p>
+    <p class="mt-2 text-xs">Say <strong>"Next"</strong> to continue.</p>
+  </div>
+
+</body>
+</html>

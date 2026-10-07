@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GATE CS & DA Master Dashboard</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --background: #09090b;
+      --foreground: #fafafa;
+      --card: #18181b;
+      --border: #27272a;
+      --muted-foreground: #a1a1aa;
+    }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    
+    /* Subject Card Styles */
+    .subject-card { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.25rem; transition: all 0.2s ease; text-decoration: none; color: inherit; height: 100%; }
+    .subject-card:hover { transform: translateY(-3px); border-color: #3f3f46; background: #202024; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+    
+    /* Active Card specific */
+    .active-card { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.03); }
+    .active-card:hover { border-color: #10b981; background: rgba(16, 185, 129, 0.08); box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.15); }
+    
+    /* Status Badges */
+    .status-badge { font-size: 0.65rem; padding: 2px 8px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; text-transform: uppercase; letter-spacing: 0.5px; }
+    .status-wip { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .status-pending { background: rgba(161, 161, 170, 0.1); color: var(--muted-foreground); }
+    
+    /* Section Titles */
+    .section-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.5rem; }
+  </style>
+</head>
+<body class="p-4 md:p-10 max-w-7xl mx-auto">
+
+  <div class="text-center mb-16">
+    <h1 class="text-4xl font-extrabold mb-3 bg-gradient-to-r from-blue-400 via-emerald-400 to-purple-400 text-transparent bg-clip-text">GATE Preparation Hub</h1>
+    <p class="text-[var(--muted-foreground)]">Master Dashboard for Computer Science (CS) & Data Science/AI (DA)</p>
+  </div>
+
+  <div class="space-y-12">
+    
+    <!-- 1. COMMON CORE -->
+    <section>
+      <div class="section-title border-b-2 border-amber-500/50">
+        <span class="text-amber-500">🔶</span> 
+        <span>Common Core <span class="text-sm font-normal text-[var(--muted-foreground)] ml-2">(Both CS & DA)</span></span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">🗄️</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Database Mgmt (DBMS)</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">SQL, Normalization, Transactions</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">🌳</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Data Structures</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Trees, Graphs, Hash Tables</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">⚡</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Algorithms</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Sorting, Greedy, DP, Complexity</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">📐</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Engineering Math</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Linear Algebra, Calculus core</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- 2. CS ONLY - SYSTEMS & ARCHITECTURE -->
+    <section>
+      <div class="section-title border-b-2 border-emerald-500/50">
+        <span class="text-emerald-500">🟢</span> 
+        <span>Computer Science: Systems & Architecture <span class="text-sm font-normal text-[var(--muted-foreground)] ml-2">(Paper 1)</span></span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- ACTIVE SUBJECT: OS -->
+        <a href="./2_CS_Only/Operating_Systems/index.html" class="subject-card active-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">🖥️</span><span class="status-badge status-wip text-emerald-400">In Progress</span></div>
+          <h3 class="font-bold text-[15px] mb-1 text-emerald-400">Operating Systems</h3>
+          <p class="text-xs text-gray-300">2 modules completed. Click to enter.</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">🌐</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Computer Networks</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">OSI, TCP/IP, Subnetting, Routing</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">⚙️</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Computer Org (COA)</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Pipelining, Cache, Memory</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">🔌</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Digital Logic</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Circuits, K-Maps, Registers</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- 3. CS ONLY - THEORY & SOFTWARE -->
+    <section>
+      <div class="section-title border-b-2 border-blue-500/50">
+        <span class="text-blue-500">🔵</span> 
+        <span>Computer Science: Theory & Software <span class="text-sm font-normal text-[var(--muted-foreground)] ml-2">(Paper 1)</span></span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">📜</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Theory of Comp (TOC)</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Automata, Regular Languages</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">🛠️</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Compiler Design</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Parsing, Syntax, Optimization</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">🧩</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Discrete Mathematics</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Logic, Sets, Graph Theory</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">💻</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Programming in C</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Pointers, Memory, Recursion</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- 4. DA ONLY -->
+    <section>
+      <div class="section-title border-b-2 border-purple-500/50">
+        <span class="text-purple-500">🟣</span> 
+        <span>Data Science & AI <span class="text-sm font-normal text-[var(--muted-foreground)] ml-2">(Paper 2)</span></span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">🤖</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Machine Learning</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Regression, SVM, Clustering, Neural Nets</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">🧠</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Artificial Intelligence</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Search algos, Logic, Reasoning</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">📊</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Probability & Statistics</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Distributions, Bayes, Variance</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">🐍</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Programming in Python</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Lists, Dictionaries, Pandas context</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">📈</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Calculus & Optimization</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Gradients, Maxima/Minima, Vectors</p>
+        </a>
+        <a href="#" class="subject-card">
+          <div class="flex justify-between items-start mb-2"><span class="text-2xl">🗃️</span><span class="status-badge status-pending">Pending</span></div>
+          <h3 class="font-bold text-[15px] mb-1">Data Warehousing</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">Data Mining, ETL, Schemas</p>
+        </a>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>
