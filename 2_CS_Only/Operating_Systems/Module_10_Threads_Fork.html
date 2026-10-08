@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 10: Threads & Fork()</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧵</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #8b5cf6; background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .code-block { background: #0f0f13; border: 1px solid var(--border); padding: 1rem; border-radius: 0.5rem; font-family: monospace; color: #e5e7eb; white-space: pre; overflow-x: auto; font-size: 0.85rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to OS Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🧵 Module 10: Threads & Fork()</h1>
+    <p class="text-[var(--muted-foreground)]">Lightweight Processes, User vs Kernel Threads, and the Fork System Call</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">📖 Core Fundamental Theory: Why Threads?</h2>
+    <p class="text-sm text-gray-300 mb-4">A Process is a "heavyweight" execution unit. It has its own isolated memory space, code, and data. Creating a new process takes a lot of time and memory. If a web server created a brand new Process for every single user request, the RAM would crash instantly.</p>
+    <p class="text-sm text-gray-300"><strong>The Solution: Threads ("Lightweight Processes")</strong>. A Thread is the smallest sequence of programmed instructions that can be managed independently by the OS scheduler. Multiple threads can exist <em>inside</em> the same process.</p>
+    
+    <div class="bg-[#121215] p-4 border border-[var(--border)] rounded mt-4">
+      <h4 class="font-bold text-white mb-2 text-sm">What do Threads SHARE vs KEEP PRIVATE?</h4>
+      <div class="grid grid-cols-2 gap-4 text-sm text-[var(--muted-foreground)]">
+        <div>
+          <strong class="text-emerald-400">SHARED (with other threads in the process):</strong>
+          <ul class="list-disc list-inside mt-1">
+            <li>Code Section</li>
+            <li>Data Section (Global Variables)</li>
+            <li>Open Files (OS resources)</li>
+          </ul>
+        </div>
+        <div>
+          <strong class="text-orange-400">PRIVATE (Unique to each thread):</strong>
+          <ul class="list-disc list-inside mt-1">
+            <li>Program Counter (PC)</li>
+            <li>CPU Registers</li>
+            <li>Stack Memory (Local Variables)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. USER VS KERNEL THREADS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">2️⃣ User-Level vs Kernel-Level Threads</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">Threads can be implemented in the User Space (by a programming library like Java Threads) or directly in the Kernel Space (by the OS itself like Windows/Linux threads).</p>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border border-[var(--border)]">
+            <th class="p-3 border border-[var(--border)]">Feature</th>
+            <th class="p-3 border border-[var(--border)] text-blue-300">User-Level Threads (ULT)</th>
+            <th class="p-3 border border-[var(--border)] text-emerald-300">Kernel-Level Threads (KLT)</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-300">
+          <tr class="border border-[var(--border)]">
+            <td class="p-3 border border-[var(--border)] font-bold">OS Awareness</td>
+            <td class="p-3 border border-[var(--border)]">OS doesn't know they exist. Sees them as 1 process.</td>
+            <td class="p-3 border border-[var(--border)]">OS fully manages and schedules them.</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-3 border border-[var(--border)] font-bold">Creation Speed</td>
+            <td class="p-3 border border-[var(--border)] text-emerald-400">Very Fast (No system calls needed)</td>
+            <td class="p-3 border border-[var(--border)] text-orange-400">Slower (Requires System calls)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-3 border border-[var(--border)] font-bold">Blocking Issue</td>
+            <td class="p-3 border border-[var(--border)] text-red-400">If 1 thread blocks (e.g. waits for I/O), the OS blocks the ENTIRE process!</td>
+            <td class="p-3 border border-[var(--border)] text-emerald-400">If 1 thread blocks, other threads keep running.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. THE FORK SYSTEM CALL -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">3️⃣ The fork() System Call</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4"><code>fork()</code> is a system call used in UNIX to create a brand new process. The new process is an exact copy (a clone) of the parent process, called the <strong>Child Process</strong>.</p>
+
+    <div class="bg-[#121215] p-4 border border-[var(--border)] rounded mb-4">
+      <h4 class="font-bold text-white mb-2 text-sm">The Return Values of fork():</h4>
+      <p class="text-sm text-gray-300">When you call <code>fork()</code>, it happens once, but it <strong>returns twice!</strong></p>
+      <ul class="text-xs text-[var(--muted-foreground)] list-disc list-inside mt-2 space-y-1">
+        <li>Returns <strong>&gt; 0</strong> (the child's Process ID) to the Parent Process.</li>
+        <li>Returns <strong>0</strong> to the newly created Child Process.</li>
+        <li>Returns <strong>-1</strong> if the creation failed.</li>
+      </ul>
+    </div>
+
+    <div class="code-block text-blue-200">int pid = fork();
+
+if (pid == 0) {
+    printf("I am the Child Process!");
+} else if (pid > 0) {
+    printf("I am the Parent Process! My child is %d", pid);
+}</div>
+  </div>
+
+  <!-- 4. FORK MATH & GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ The fork() Math (GATE Numericals)</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div class="bg-[#202024] p-4 border border-[var(--border)] rounded flex flex-col justify-center items-center">
+        <p class="text-sm text-gray-400 mb-2">If <code>fork()</code> is called <strong>N</strong> times in a row:</p>
+        <p class="text-lg font-monospace text-emerald-400">Total Processes = 2<sup>N</sup></p>
+        <p class="text-lg font-monospace text-blue-400 mt-2">Child Processes = 2<sup>N</sup> - 1</p>
+      </div>
+      
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded text-xs text-gray-300 font-monospace">
+        <span class="text-gray-500">// Example: N=3</span><br>
+        fork(); <span class="text-gray-500">// 2 processes total</span><br>
+        fork(); <span class="text-gray-500">// 4 processes total</span><br>
+        fork(); <span class="text-gray-500">// 8 processes total</span><br>
+        <br>
+        <span class="text-emerald-400">Total Processes = 2<sup>3</sup> = 8</span><br>
+        <span class="text-blue-400">Child Processes = 8 - 1 = 7</span>
+      </div>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ GATE TRAP: The AND / OR short-circuit</h4>
+      <p class="text-sm text-gray-300">GATE loves to ask questions like: <code>if(fork() && fork())</code>.</p>
+      <p class="text-xs text-[var(--muted-foreground)] mt-2">Because it is a Logical AND (<code>&&</code>), if the first <code>fork()</code> returns 0 (which it does for the child), the C compiler <strong>short-circuits</strong> and completely skips executing the second <code>fork()</code> for the child! You must draw a tree diagram to solve these safely.</p>
+    </div>
+  </div>
+
+  <!-- CELEBRATION -->
+  <div class="mt-8 p-6 bg-emerald-900/20 border border-emerald-500/50 rounded-xl text-center">
+    <h2 class="text-2xl font-bold text-emerald-400 mb-2">🎉 OPERATING SYSTEMS COMPLETE! 🎉</h2>
+    <p class="text-sm text-emerald-200">You have successfully mastered the entire Operating Systems syllabus for GATE. You are now ready to tackle previous year questions!</p>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-lg transition-colors text-lg">
+      Return to OS Master Index
+    </a>
+  </div>
+
+</body>
+</html>
