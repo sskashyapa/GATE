@@ -38,16 +38,16 @@
       <div class="bg-[#121215] p-4 rounded border border-[var(--border)]">
         <h4 class="font-bold text-white mb-2 border-b border-[var(--border)] pb-2">Logical Address Space (LAS)</h4>
         <ul class="text-sm text-gray-300 space-y-2 mt-2">
-          <li><strong>LAS Size:</strong> e.g., 4 GB = $2^{32}$ Bytes</li>
-          <li><strong>Logical Address (LA):</strong> Log₂ (LAS) = 32 bits</li>
+          <li><strong>LAS Size:</strong> e.g., 4 GB = 2<sup>32</sup> Bytes</li>
+          <li><strong>Logical Address (LA):</strong> Log<sub>2</sub> (LAS) = 32 bits</li>
           <li>LA is split into: <code>Page Number (p)</code> + <code>Offset (d)</code></li>
         </ul>
       </div>
       <div class="bg-[#121215] p-4 rounded border border-[var(--border)]">
         <h4 class="font-bold text-white mb-2 border-b border-[var(--border)] pb-2">Physical Address Space (PAS)</h4>
         <ul class="text-sm text-gray-300 space-y-2 mt-2">
-          <li><strong>PAS Size:</strong> e.g., 16 GB = $2^{34}$ Bytes</li>
-          <li><strong>Physical Address (PA):</strong> Log₂ (PAS) = 34 bits</li>
+          <li><strong>PAS Size:</strong> e.g., 16 GB = 2<sup>34</sup> Bytes</li>
+          <li><strong>Physical Address (PA):</strong> Log<sub>2</sub> (PAS) = 34 bits</li>
           <li>PA is split into: <code>Frame Number (f)</code> + <code>Offset (d)</code></li>
         </ul>
       </div>
@@ -56,9 +56,9 @@
     <div class="bg-[#202024] p-4 rounded-lg border border-[var(--border)]">
       <h4 class="font-bold text-white mb-2 text-sm">Crucial Formulas to Memorize:</h4>
       <div class="space-y-2 text-sm">
-        <p><strong class="text-blue-300">Offset bits (d)</strong> = Log₂ (Page Size)</p>
-        <p><strong class="text-blue-300">Number of Pages</strong> = LAS / Page Size = $2^{p}$</p>
-        <p><strong class="text-blue-300">Number of Frames</strong> = PAS / Page Size = $2^{f}$</p>
+        <p><strong class="text-blue-300">Offset bits (d)</strong> = Log<sub>2</sub> (Page Size)</p>
+        <p><strong class="text-blue-300">Number of Pages</strong> = LAS / Page Size = 2<sup>p</sup></p>
+        <p><strong class="text-blue-300">Number of Frames</strong> = PAS / Page Size = 2<sup>f</sup></p>
         <p class="mt-2 pt-2 border-t border-[var(--border)] text-emerald-400 font-bold tracking-wide"><span class="formula-badge">Page Table Size = Number of Pages × PTE Size</span></p>
       </div>
     </div>
