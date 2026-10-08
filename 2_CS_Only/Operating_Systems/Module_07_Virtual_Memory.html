@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 7: Advanced Paging & Virtual Memory</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .formula-badge { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to OS Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🧮 Module 7: Virtual Memory & Numericals</h1>
+    <p class="text-[var(--muted-foreground)]">Paging Math, TLB Access Time, and Page Replacement Algorithms</p>
+  </div>
+
+  <!-- 1. PAGING MATH: THE GOLDEN FORMULAS -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">1️⃣ The Core Paging Math</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">Every GATE paging numerical starts by breaking down the memory sizes into powers of 2. Memorize these mappings:</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div class="bg-[#121215] p-4 rounded border border-[var(--border)]">
+        <h4 class="font-bold text-white mb-2 border-b border-[var(--border)] pb-2">Logical Address Space (LAS)</h4>
+        <ul class="text-sm text-gray-300 space-y-2 mt-2">
+          <li><strong>LAS Size:</strong> e.g., 4 GB = $2^{32}$ Bytes</li>
+          <li><strong>Logical Address (LA):</strong> Log₂ (LAS) = 32 bits</li>
+          <li>LA is split into: <code>Page Number (p)</code> + <code>Offset (d)</code></li>
+        </ul>
+      </div>
+      <div class="bg-[#121215] p-4 rounded border border-[var(--border)]">
+        <h4 class="font-bold text-white mb-2 border-b border-[var(--border)] pb-2">Physical Address Space (PAS)</h4>
+        <ul class="text-sm text-gray-300 space-y-2 mt-2">
+          <li><strong>PAS Size:</strong> e.g., 16 GB = $2^{34}$ Bytes</li>
+          <li><strong>Physical Address (PA):</strong> Log₂ (PAS) = 34 bits</li>
+          <li>PA is split into: <code>Frame Number (f)</code> + <code>Offset (d)</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bg-[#202024] p-4 rounded-lg border border-[var(--border)]">
+      <h4 class="font-bold text-white mb-2 text-sm">Crucial Formulas to Memorize:</h4>
+      <div class="space-y-2 text-sm">
+        <p><strong class="text-blue-300">Offset bits (d)</strong> = Log₂ (Page Size)</p>
+        <p><strong class="text-blue-300">Number of Pages</strong> = LAS / Page Size = $2^{p}$</p>
+        <p><strong class="text-blue-300">Number of Frames</strong> = PAS / Page Size = $2^{f}$</p>
+        <p class="mt-2 pt-2 border-t border-[var(--border)] text-emerald-400 font-bold tracking-wide"><span class="formula-badge">Page Table Size = Number of Pages × PTE Size</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. TLB AND EFFECTIVE ACCESS TIME -->
+  <div class="content-box border-l-4 border-l-purple-500">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">2️⃣ Translation Lookaside Buffer (TLB)</h2>
+    <p class="text-sm text-gray-300 mb-4">Because the Page Table is stored in RAM, translating an address and fetching the data requires <strong>TWO</strong> memory accesses (one for the table, one for the data). This is very slow! To fix this, we use a <strong>TLB (a small, extremely fast hardware cache)</strong> inside the MMU.</p>
+
+    <div class="bg-[#121215] p-4 rounded border border-[var(--border)] mb-4">
+      <h4 class="font-bold text-white mb-2 text-sm">Effective Access Time (EAT) Formula:</h4>
+      <p class="text-sm text-[var(--muted-foreground)] mb-3">Let <code>H</code> = TLB Hit Ratio, <code>C</code> = TLB Access Time, <code>M</code> = Main Memory Access Time.</p>
+      <div class="text-center font-monospace text-purple-300 py-2 border border-purple-500/30 rounded bg-purple-500/10">
+        EAT = H × (C + M) + (1 - H) × (C + 2M)
+      </div>
+      <p class="text-xs text-gray-400 mt-3 text-center"><em>Explanation:</em> If TLB Hit, we access TLB (C) then RAM (M). If TLB Miss, we access TLB (C), then RAM for Page Table (M), then RAM for Data (M).</p>
+    </div>
+  </div>
+
+  <!-- 3. PAGE REPLACEMENT ALGORITHMS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">3️⃣ Page Replacement Algorithms</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">When a CPU requests a page that is NOT in RAM, a <strong>Page Fault</strong> occurs. The OS must bring the page from the hard drive. If the RAM is full, the OS must evict an old page. How does it choose?</p>
+
+    <div class="space-y-4">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-orange-400 mb-1">1. First-In, First-Out (FIFO)</h4>
+        <p class="text-sm text-gray-300">Evicts the oldest page in memory. Simple to implement using a queue, but suffers from terrible performance.</p>
+        <p class="text-xs text-red-400 font-bold mt-2">⚠️ GATE Favorite: Belady's Anomaly</p>
+        <p class="text-xs text-[var(--muted-foreground)]">Only FIFO suffers from this! Belady's Anomaly is a situation where giving the process <em>more</em> physical memory frames actually <em>increases</em> the number of page faults.</p>
+      </div>
+      
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-400 mb-1">2. Least Recently Used (LRU)</h4>
+        <p class="text-sm text-gray-300">Evicts the page that has not been used for the longest time. Highly effective and widely used in real OS. Does NOT suffer from Belady's anomaly.</p>
+      </div>
+
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-blue-400 mb-1">3. Optimal Page Replacement (OPT)</h4>
+        <p class="text-sm text-gray-300">Evicts the page that will not be used for the longest period of time in the <em>future</em>. It guarantees the absolute minimum number of page faults, but it is impossible to implement practically because the OS cannot see the future.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. THRASHING -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ Thrashing (Concept)</h2>
+    <p class="text-sm text-gray-300 mb-3">If a process does not have enough frames to hold its actively used pages (its <em>Working Set</em>), it will constantly trigger Page Faults.</p>
+    <p class="text-sm text-gray-300">The CPU becomes idle because it's always waiting for the disk. The OS sees the CPU is idle, so it loads <em>more</em> processes into RAM, making the frame shortage even worse!</p>
+    <div class="bg-[#202024] p-3 rounded border border-red-500/30 text-red-200 text-sm mt-3">
+      <strong>Thrashing Definition:</strong> A state where the system is spending more time swapping pages in and out of the hard drive than executing actual CPU instructions. CPU utilization drops to near zero.
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to OS Index
+    </a>
+  </div>
+
+</body>
+</html>
