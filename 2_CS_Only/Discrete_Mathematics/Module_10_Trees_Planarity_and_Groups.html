@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 10: Trees, Planarity & Groups</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #8b5cf6; background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #c084fc; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to Discrete Math Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🌳 Module 10: Trees, Planarity & Group Theory</h1>
+    <p class="text-[var(--muted-foreground)]">Cayley's Tree Formula, Euler's Planar Formula (V - E + R = 2), Kuratowski & Lagrange's Theorem</p>
+  </div>
+
+  <!-- 1. TREES & CAYLEY'S FORMULA -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">1️⃣ Trees &amp; Spanning Tree Counting</h2>
+    <p class="text-sm text-gray-300 mb-3">A <strong>Tree</strong> is a connected, acyclic undirected graph. For any tree with <code>n</code> vertices, exactly <strong>|E| = n - 1</strong> edges exist.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300 mb-2">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1">
+        <strong class="text-white text-sm">Fundamental Invariants:</strong>
+        <p>• Unique simple path between every pair of vertices.</p>
+        <p>• Adding any single edge creates <strong>exactly one unique cycle</strong>.</p>
+        <p>• Removing any single edge disconnects the tree (every edge is a bridge!).</p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1">
+        <strong class="text-purple-300 text-sm">Cayley's Formula (Labeled Trees):</strong>
+        <p class="text-[var(--muted-foreground)]">Number of distinct labeled spanning trees in a complete graph K<sub>n</sub>:</p>
+        <div class="p-2 bg-[#202024] rounded text-center text-sm font-mono text-emerald-400 font-bold">
+          <span class="formula-badge">T(n) = n<sup>n - 2</sup></span>
+        </div>
+        <p class="text-[10px] text-gray-400 text-center mt-1">Example: For n = 4 &rarr; 4<sup>4-2</sup> = 4<sup>2</sup> = <strong>16 trees</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. PLANAR GRAPHS & EULER'S FORMULA -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">2️⃣ Planar Graphs &amp; Euler's Formula</h2>
+    <p class="text-sm text-gray-300 mb-3">A graph is <strong>Planar</strong> if it can be drawn in a 2D plane such that no two edges cross each other.</p>
+
+    <!-- Euler's Formula -->
+    <div class="p-3 bg-blue-500/10 border border-blue-500/30 rounded text-center mb-4">
+      <p class="text-xs text-gray-300 mb-1">Euler's Formula for Connected Planar Graphs:</p>
+      <p class="text-base font-mono text-blue-300 font-bold"><span class="formula-badge">V - E + R = 2</span></p>
+      <p class="text-[11px] text-gray-400 mt-1">(Where V = Vertices, E = Edges, R = Faces/Regions, including the unbounded exterior region!).</p>
+    </div>
+
+    <!-- The 2 Planar Invariant Inequalities -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300 mb-4">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-emerald-400 text-sm">Standard Connected Planar (V &ge; 3):</strong>
+        <p class="text-[var(--muted-foreground)] mt-1">Every face bounded by &ge; 3 edges &rarr; 2E &ge; 3R:</p>
+        <p class="text-sm font-mono text-emerald-300 my-1"><span class="formula-badge">E &le; 3V - 6</span></p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-purple-300 text-sm">Triangle-Free Planar (No C<sub>3</sub>, e.g. Bipartite):</strong>
+        <p class="text-[var(--muted-foreground)] mt-1">Every face bounded by &ge; 4 edges &rarr; 2E &ge; 4R:</p>
+        <p class="text-sm font-mono text-purple-300 my-1"><span class="formula-badge">E &le; 2V - 4</span></p>
+      </div>
+    </div>
+
+    <!-- Kuratowski's Theorem -->
+    <div class="bg-[#121215] p-3 rounded border border-[var(--border)] text-xs text-gray-300">
+      <strong class="text-white">Kuratowski's Theorem:</strong> A graph is planar iff it contains no subgraph homeomorphic to <strong>K<sub>5</sub></strong> (Complete graph on 5 vertices) or <strong>K<sub>3,3</sub></strong> (Utility graph / Complete bipartite on 3,3).
+      <p class="text-red-400 mt-1">• K<sub>5</sub> has V=5, E=10. But 3(5) - 6 = 9 &lt; 10 &rarr; <strong>Non-Planar!</strong><br>• K<sub>3,3</sub> has V=6, E=9 (bipartite). But 2(6) - 4 = 8 &lt; 9 &rarr; <strong>Non-Planar!</strong></p>
+    </div>
+  </div>
+
+  <!-- 3. GROUP THEORY & ALGEBRAIC STRUCTURES -->
+  <div class="content-box border-l-4 border-l-purple-500">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">3️⃣ Group Theory Hierarchy &amp; Lagrange's Theorem</h2>
+    
+    <div class="overflow-x-auto mb-4 text-xs">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border border-[var(--border)] text-gray-300">
+            <th class="p-2 border border-[var(--border)]">Algebraic Structure</th>
+            <th class="p-2 border border-[var(--border)]">Closure</th>
+            <th class="p-2 border border-[var(--border)]">Associative</th>
+            <th class="p-2 border border-[var(--border)]">Identity (e)</th>
+            <th class="p-2 border border-[var(--border)]">Inverse (a<sup>-1</sup>)</th>
+            <th class="p-2 border border-[var(--border)]">Commutative</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-300 font-mono text-center">
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-sans text-left font-bold text-gray-300">Groupoid</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-red-500">&cross;</td>
+            <td class="p-2 border border-[var(--border)] text-red-500">&cross;</td>
+            <td class="p-2 border border-[var(--border)] text-red-500">&cross;</td>
+            <td class="p-2 border border-[var(--border)] text-red-500">&cross;</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-sans text-left font-bold text-gray-300">Semigroup</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-red-500">&cross;</td>
+            <td class="p-2 border border-[var(--border)] text-red-500">&cross;</td>
+            <td class="p-2 border border-[var(--border)] text-red-500">&cross;</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-sans text-left font-bold text-gray-300">Monoid</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-red-500">&cross;</td>
+            <td class="p-2 border border-[var(--border)] text-red-500">&cross;</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-sans text-left font-bold text-purple-300">Group</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-red-500">&cross;</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-sans text-left font-bold text-emerald-400">Abelian Group</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">&check;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Lagrange's Theorem -->
+    <div class="bg-[#202024] p-4 rounded border border-[var(--border)] text-xs text-gray-300 space-y-2">
+      <strong class="text-purple-300 text-sm">Lagrange's Theorem:</strong>
+      <p>In any finite group G, the <strong>order of every subgroup H divides the order of G</strong>: <span class="formula-badge">|H| divides |G|</span>.</p>
+      <p class="text-emerald-400">• If |G| = p (prime), G has NO non-trivial proper subgroups, and G is strictly <strong>Cyclic and Abelian</strong>!</p>
+      <p class="text-blue-300">• Generators in a finite cyclic group of order n: exactly <strong>&phi;(n)</strong> generators exist!</p>
+    </div>
+  </div>
+
+  <!-- 4. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: The Exterior Region in Euler's Formula</h4>
+      <p class="text-sm text-gray-300">When counting faces <code>R</code> in <code>V - E + R = 2</code>, do NOT forget the <strong>infinite outside region</strong>! If a planar drawing has 3 bounded interior circles, the total faces R is <code>3 + 1 = 4</code>!</p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Subgroup Order Divisibility</h4>
+      <p class="text-sm text-gray-300">If a group has size <code>|G| = 24</code>, can it have a subgroup of size 7?
+        <br>By Lagrange's theorem, <strong>NO</strong>, because 7 does not divide 24! Possible subgroup sizes can ONLY be divisors: <code>{1, 2, 3, 4, 6, 8, 12, 24}</code>.
+      </p>
+    </div>
+  </div>
+
+  <!-- CELEBRATION -->
+  <div class="mt-8 p-6 bg-purple-900/20 border border-purple-500/50 rounded-xl text-center">
+    <h2 class="text-2xl font-bold text-purple-400 mb-2">🎉 DISCRETE MATHEMATICS COMPLETE! 🎉</h2>
+    <p class="text-sm text-purple-200">You have officially mastered the entire Discrete Mathematics syllabus for GATE CS from Logic to Graph &amp; Group Theory!</p>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-colors text-lg">
+      Return to Discrete Math Master Index
+    </a>
+  </div>
+
+</body>
+</html>

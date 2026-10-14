@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 2: Predicate Logic & Inference</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #8b5cf6; background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #c084fc; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to Discrete Math Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🔍 Module 2: First-Order Predicate Logic & Inference</h1>
+    <p class="text-[var(--muted-foreground)]">Quantifiers (&forall;, &exist;), Nested Scopes, English Translation Rules & Resolution Proofs</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">📖 Core Fundamental Theory: Why Predicate Logic?</h2>
+    <p class="text-sm text-gray-300 mb-3">Propositional logic treats statements as indivisible atomic units (like <code>P</code> or <code>Q</code>). It cannot express relationships with variables like <em>"x &gt; 3"</em> or generalize properties over sets like <em>"All human beings are mortal"</em>.</p>
+    <p class="text-sm text-gray-300"><strong>First-Order Logic (Predicate Logic)</strong> introduces <strong>Predicates P(x)</strong>, a <strong>Domain / Universe of Discourse</strong>, and <strong>Quantifiers (&forall;, &exist;)</strong> to express complex mathematical reasoning.</p>
+  </div>
+
+  <!-- 2. QUANTIFIERS & NEGATION -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">1️⃣ The Two Quantifiers</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div class="p-4 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-blue-300 text-sm mb-1">Universal Quantifier (&forall;x P(x))</h4>
+        <p class="text-xs text-[var(--muted-foreground)] mb-2"><em>"For all x, P(x) is true."</em></p>
+        <ul class="text-xs text-gray-300 space-y-1">
+          <li>• True iff P(x) is true for <strong>EVERY</strong> element in the domain.</li>
+          <li>• False if there exists even a <strong>single counterexample</strong>.</li>
+          <li>• Equivalent to finite AND: P(x<sub>1</sub>) &and; P(x<sub>2</sub>) &and; ... &and; P(x<sub>n</sub>).</li>
+        </ul>
+      </div>
+
+      <div class="p-4 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-300 text-sm mb-1">Existential Quantifier (&exist;x P(x))</h4>
+        <p class="text-xs text-[var(--muted-foreground)] mb-2"><em>"There exists an x such that P(x) is true."</em></p>
+        <ul class="text-xs text-gray-300 space-y-1">
+          <li>• True iff P(x) is true for <strong>AT LEAST ONE</strong> element in the domain.</li>
+          <li>• False if P(x) is false for all elements in domain.</li>
+          <li>• Equivalent to finite OR: P(x<sub>1</sub>) &or; P(x<sub>2</sub>) &or; ... &or; P(x<sub>n</sub>).</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- De Morgan's for Quantifiers -->
+    <div class="bg-[#202024] p-3 rounded border border-[var(--border)] text-xs font-mono text-center space-y-1">
+      <p class="text-purple-300 font-bold">Negation Rules (De Morgan's for Quantifiers):</p>
+      <p>&not;(&forall;x P(x)) &equiv; &exist;x &not;P(x) &nbsp;&nbsp;|&nbsp;&nbsp; &not;(&exist;x P(x)) &equiv; &forall;x &not;P(x)</p>
+    </div>
+  </div>
+
+  <!-- 3. NESTED QUANTIFIERS & ORDER MATTERS -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">2️⃣ Nested Quantifiers: Order of &forall; and &exist;</h2>
+    <p class="text-sm text-gray-300 mb-3">While &forall;x &forall;y &equiv; &forall;y &forall;x and &exist;x &exist;y &equiv; &exist;y &exist;x, <strong>mixing &forall; and &exist; is NOT commutative!</strong></p>
+
+    <div class="p-3 bg-purple-500/10 border border-purple-500/30 rounded text-center text-xs font-mono text-purple-200 mb-4">
+      &exist;y &forall;x P(x, y) &nbsp;&rArr;&nbsp; &forall;x &exist;y P(x, y) &nbsp;&nbsp;(Converse is generally FALSE!)
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-emerald-400">&forall;x &exist;y (x &lt; y)</strong> (over Real Numbers):
+        <p class="mt-1 text-[var(--muted-foreground)]"><em>"Given any real number x, there exists some real number y strictly greater than x."</em> &rarr; <strong>TRUE</strong> (just pick y = x + 1).</p>
+      </div>
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-red-400">&exist;y &forall;x (x &lt; y)</strong> (over Real Numbers):
+        <p class="mt-1 text-[var(--muted-foreground)]"><em>"There exists a single universal number y that is greater than ALL real numbers x."</em> &rarr; <strong>FALSE</strong> (No maximum real number exists!).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. ENGLISH TO FIRST-ORDER LOGIC TRANSLATION -->
+  <div class="content-box border-l-4 border-l-purple-500">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">3️⃣ English to Logic Translations (The 4 Canonical Patterns)</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">Let A(x) = "x is a student" and B(x) = "x is smart":</p>
+
+    <div class="overflow-x-auto mb-2">
+      <table class="w-full text-xs text-left border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border border-[var(--border)] text-gray-300">
+            <th class="p-2.5 border border-[var(--border)]">English Sentence</th>
+            <th class="p-2.5 border border-[var(--border)] text-emerald-400">Correct Formalization</th>
+            <th class="p-2.5 border border-[var(--border)] text-red-400">Deadly GATE Trap (Wrong!)</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-300 font-mono">
+          <tr class="border border-[var(--border)]">
+            <td class="p-2.5 border border-[var(--border)] font-sans">"All students are smart"</td>
+            <td class="p-2.5 border border-[var(--border)] text-emerald-300 font-bold">&forall;x (A(x) &rarr; B(x))</td>
+            <td class="p-2.5 border border-[var(--border)] text-red-400">&forall;x (A(x) &and; B(x)) &larr; (Means everyone on Earth is a student AND smart!)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2.5 border border-[var(--border)] font-sans">"Some students are smart"</td>
+            <td class="p-2.5 border border-[var(--border)] text-emerald-300 font-bold">&exist;x (A(x) &and; B(x))</td>
+            <td class="p-2.5 border border-[var(--border)] text-red-400">&exist;x (A(x) &rarr; B(x)) &larr; (Trivially true if someone is not a student!)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2.5 border border-[var(--border)] font-sans">"No students are smart"</td>
+            <td class="p-2.5 border border-[var(--border)] text-emerald-300 font-bold">&forall;x (A(x) &rarr; &not;B(x))</td>
+            <td class="p-2.5 border border-[var(--border)] text-red-400">&not;&forall;x (A(x) &rarr; B(x)) &larr; (Only means not ALL students are smart!)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5. RULES OF INFERENCE & ARGUMENT VALIDITY -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ Rules of Inference & Argument Validity</h2>
+    <p class="text-sm text-gray-300 mb-3">An argument with premises P<sub>1</sub>, P<sub>2</sub>, ... P<sub>k</sub> and conclusion C is <strong>VALID</strong> if: <span class="formula-badge">(P<sub>1</sub> &and; P<sub>2</sub> &and; ... &and; P<sub>k</sub>) &rarr; C is a TAUTOLOGY</span>.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1">
+        <strong class="text-blue-300 font-sans">Modus Ponens:</strong>
+        <p>P, P &rarr; Q &nbsp;&vdash;&nbsp; <strong>Q</strong></p>
+        <strong class="text-blue-300 font-sans pt-2 block">Modus Tollens:</strong>
+        <p>&not;Q, P &rarr; Q &nbsp;&vdash;&nbsp; <strong>&not;P</strong></p>
+        <strong class="text-blue-300 font-sans pt-2 block">Hypothetical Syllogism:</strong>
+        <p>P &rarr; Q, Q &rarr; R &nbsp;&vdash;&nbsp; <strong>P &rarr; R</strong></p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1">
+        <strong class="text-purple-300 font-sans">Disjunctive Syllogism:</strong>
+        <p>P &or; Q, &not;P &nbsp;&vdash;&nbsp; <strong>Q</strong></p>
+        <strong class="text-purple-300 font-sans pt-2 block">Resolution (Universal Rule):</strong>
+        <p>P &or; Q, &not;P &or; R &nbsp;&vdash;&nbsp; <strong>Q &or; R</strong></p>
+        <p class="text-[10px] text-gray-400 font-sans mt-2">Resolution is refutation complete: to prove C, negate C (&not;C), add it to premises, convert to CNF clauses, and derive the empty clause (&square; / Contradiction)!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">5️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: Never use &and; with &forall;, Never use &rarr; with &exist;</h4>
+      <p class="text-sm text-gray-300">
+        • <code>&forall;x (A(x) &and; B(x))</code> means EVERY entity in the universe has both properties.
+        <br>• <code>&exist;x (A(x) &rarr; B(x))</code> evaluates to TRUE if there is just ONE entity in the universe for which A(x) is false (vacuous truth). It doesn't prove that any A actually exists!
+      </p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Distributing &forall; over &or; is INVALID!</h4>
+      <p class="text-sm text-gray-300">
+        • &forall; distributes over &and;: <code>&forall;x (P(x) &and; Q(x)) &equiv; (&forall;x P(x)) &and; (&forall;x Q(x))</code> &rarr; <strong>VALID</strong>.
+        <br>• &forall; does NOT distribute over &or;: <code>&forall;x (P(x) &or; Q(x)) &ne; (&forall;x P(x)) &or; (&forall;x Q(x))</code> &rarr; <strong>INVALID</strong>! (e.g. Every integer is either Even or Odd, but it is false that all integers are even or all are odd!).
+      </p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to Discrete Math Index
+    </a>
+  </div>
+
+</body>
+</html>

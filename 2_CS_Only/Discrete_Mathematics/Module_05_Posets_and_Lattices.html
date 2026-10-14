@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 5: Posets & Lattices</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📐</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #8b5cf6; background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #c084fc; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to Discrete Math Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">📐 Module 5: Posets, Hasse Diagrams & Lattices</h1>
+    <p class="text-[var(--muted-foreground)]">Partial Orders, Maximal vs Greatest Elements, LUB/GLB, Distributive & Boolean Lattices</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">📖 Core Fundamental Theory: What is a Poset?</h2>
+    <p class="text-sm text-gray-300 mb-3">A relation <code>R</code> on a set A is a <strong>Partial Order</strong> if it satisfies 3 strict axioms: <strong>Reflexive, Antisymmetric, and Transitive (RAT)</strong>. The pair <code>(A, &le;)</code> is called a <strong>Partially Ordered Set (Poset)</strong>.</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 text-xs">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white mb-1">Standard Poset Examples:</h4>
+        <ul class="list-disc list-inside space-y-1 text-gray-300">
+          <li><code>(&Zopf;, &le;)</code>: Integers with "less than or equal to".</li>
+          <li><code>(P(S), &sube;)</code>: Power set with subset inclusion.</li>
+          <li><code>(D<sub>n</sub>, |)</code>: Divisors of an integer <code>n</code> with divisibility.</li>
+        </ul>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white mb-1">Hasse Diagram (Simplified Graph)</h4>
+        <p class="text-[var(--muted-foreground)]">To draw a Hasse diagram of a poset:
+          <br>1. Delete all self-loops (Reflexivity understood).
+          <br>2. Delete all transitive bypass edges.
+          <br>3. Place smaller elements at bottom, larger elements on top with upward lines.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. EXTREMAL ELEMENTS (MAXIMAL VS GREATEST) -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">1️⃣ Extremal Elements in Posets</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">GATE frequently tests the difference between Maximal/Minimal vs Greatest/Least:</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300 mb-4">
+      <!-- Maximal vs Greatest -->
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-2">
+        <h4 class="font-bold text-emerald-400 text-sm">Top Elements:</h4>
+        <p>• <strong>Maximal Element:</strong> An element <code>m</code> such that NO element is strictly greater than <code>m</code>. (A poset can have <strong>multiple maximal elements</strong>!).</p>
+        <p>• <strong>Greatest Element (Top / 1):</strong> An element <code>G</code> such that <code>&forall;x &isin; A, x &le; G</code>. (If it exists, it is <strong>strictly UNIQUE</strong>!).</p>
+      </div>
+
+      <!-- Minimal vs Least -->
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-2">
+        <h4 class="font-bold text-purple-400 text-sm">Bottom Elements:</h4>
+        <p>• <strong>Minimal Element:</strong> An element <code>m</code> such that NO element is strictly smaller than <code>m</code>. (A poset can have <strong>multiple minimal elements</strong>!).</p>
+        <p>• <strong>Least Element (Bottom / 0):</strong> An element <code>L</code> such that <code>&forall;x &isin; A, L &le; x</code>. (If it exists, it is <strong>strictly UNIQUE</strong>!).</p>
+      </div>
+    </div>
+
+    <!-- LUB and GLB -->
+    <div class="bg-[#202024] p-3 rounded border border-[var(--border)] text-xs text-gray-300">
+      <strong class="text-white">LUB &amp; GLB:</strong>
+      <br>• <strong>LUB (Least Upper Bound / Join &or;):</strong> The smallest among all upper bounds of {a, b}.
+      <br>• <strong>GLB (Greatest Lower Bound / Meet &and;):</strong> The largest among all lower bounds of {a, b}.
+    </div>
+  </div>
+
+  <!-- 3. LATTICES & THEIR TYPES -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">2️⃣ Lattices &amp; Special Varieties</h2>
+    <p class="text-sm text-gray-300 mb-3">A poset <code>(L, &le;)</code> is a <strong>Lattice</strong> iff <strong>EVERY pair of elements {a, b} has a UNIQUE LUB (a &or; b) and a UNIQUE GLB (a &and; b)</strong>.</p>
+
+    <div class="space-y-3 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-blue-300 text-sm">1. Bounded Lattice</strong>
+        <p class="mt-1 text-[var(--muted-foreground)]">A lattice that has both a unique Least element (0) and a unique Greatest element (1). <em>Every finite lattice is guaranteed to be bounded!</em></p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-purple-300 text-sm">2. Distributive Lattice</strong>
+        <p class="mt-1 text-[var(--muted-foreground)]">Join and meet distribute over each other: <code>a &and; (b &or; c) = (a &and; b) &or; (a &and; c)</code>.</p>
+        <p class="text-yellow-300 mt-1"><strong>Invariant:</strong> A lattice is distributive iff it contains NEITHER the <em>Pentagon lattice (N<sub>5</sub>)</em> NOR the <em>Diamond lattice (M<sub>3</sub>)</em> as a sublattice!</p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-emerald-300 text-sm">3. Complemented Lattice</strong>
+        <p class="mt-1 text-[var(--muted-foreground)]">In a bounded lattice, every element <code>a</code> has a complement <code>a'</code> such that: <code>a &or; a' = 1</code> and <code>a &and; a' = 0</code>.</p>
+      </div>
+
+      <div class="p-3 bg-purple-500/10 border border-purple-500/30 rounded">
+        <strong class="text-purple-200 text-sm">4. Boolean Algebra (Boolean Lattice)</strong>
+        <p class="mt-1 text-gray-300">A lattice that is <strong>BOTH Distributive AND Complemented</strong>.</p>
+        <p class="text-emerald-400 font-bold mt-1 font-mono">&rarr; Cardinality Invariant: Every finite Boolean algebra has exactly 2<sup>k</sup> elements (2, 4, 8, 16...)!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">3️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: Cardinality of Boolean Algebra MUST be a Power of 2!</h4>
+      <p class="text-sm text-gray-300">If a GATE question asks: <em>"Can a lattice with 6 elements (or 10, 12 elements) be a Boolean algebra?"</em>
+        <br>Answer is <strong>NO, NEVER!</strong> Any finite Boolean algebra is isomorphic to a power set lattice P(S), so its size must strictly be <strong>2<sup>k</sup></strong> (1, 2, 4, 8, 16, 32...).
+      </p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Maximal &ne; Greatest!</h4>
+      <p class="text-sm text-gray-300">A poset can have <strong>multiple maximal elements</strong>, but it can have <strong>at most ONE greatest element</strong>. If a poset has 2 or more maximal elements, it has <strong>NO greatest element</strong>!</p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to Discrete Math Index
+    </a>
+  </div>
+
+</body>
+</html>

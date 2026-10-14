@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 7: Combinatorics & Generating Functions</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #8b5cf6; background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #c084fc; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to Discrete Math Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🎲 Module 7: Combinatorics & Generating Functions</h1>
+    <p class="text-[var(--muted-foreground)]">Permutations, Combinations, Stars & Bars Theorem & Ordinary Generating Functions</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">📖 Core Fundamental Theory: Sum vs Product Rule</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-blue-300 text-sm mb-1">Sum Rule (OR / Disjoint)</h4>
+        <p>If task A can be done in <code>m</code> ways and task B can be done in <code>n</code> mutually exclusive ways, then task A OR B can be done in <strong>m + n</strong> ways.</p>
+      </div>
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-300 text-sm mb-1">Product Rule (AND / Sequence)</h4>
+        <p>If a procedure consists of sequential subtasks where step 1 has <code>m</code> outcomes and step 2 has <code>n</code> outcomes, then the combined task has <strong>m &times; n</strong> outcomes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. PERMUTATIONS & COMBINATIONS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">1️⃣ Permutations vs Combinations</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300 mb-4">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-blue-400 text-sm mb-1">Permutation (Order Matters)</h4>
+        <p class="text-[var(--muted-foreground)] mb-1">Arranging <code>r</code> distinct items from a set of <code>n</code>:</p>
+        <p class="text-base font-mono text-blue-300 py-1"><span class="formula-badge">P(n, r) = n! / (n - r)!</span></p>
+        <p class="text-[11px] text-gray-400 mt-1">• With duplicate items: <strong>n! / (n<sub>1</sub>! n<sub>2</sub>! ... n<sub>k</sub>!)</strong><br>• Circular arrangements: <strong>(n - 1)!</strong></p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-400 text-sm mb-1">Combination (Order Does NOT Matter)</h4>
+        <p class="text-[var(--muted-foreground)] mb-1">Selecting <code>r</code> items from a set of <code>n</code>:</p>
+        <p class="text-base font-mono text-emerald-300 py-1"><span class="formula-badge">C(n, r) = n! / [r! (n - r)!]</span></p>
+        <p class="text-[11px] text-gray-400 mt-1">• Symmetry identity: <strong>C(n, r) = C(n, n - r)</strong><br>• Pascal's Identity: <strong>C(n, r) = C(n - 1, r) + C(n - 1, r - 1)</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. STARS AND BARS THEOREM (HEAVY GATE TOPIC) -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">2️⃣ Stars &amp; Bars Theorem (Distributing Identical Items)</h2>
+    <p class="text-sm text-gray-300 mb-3">Used to find the number of ways to distribute <strong>r identical objects</strong> into <strong>n distinct bins</strong>:</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-purple-300 text-sm mb-1">Case 1: Non-Negative Integers (x<sub>i</sub> &ge; 0)</h4>
+        <p class="text-[var(--muted-foreground)] mb-2">Equation: x<sub>1</sub> + x<sub>2</sub> + ... + x<sub>n</sub> = r &nbsp; (empty bins allowed)</p>
+        <div class="p-2 bg-[#202024] rounded text-center text-sm font-mono text-emerald-400">
+          <span class="formula-badge">C(n + r - 1, r) = C(n + r - 1, n - 1)</span>
+        </div>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-blue-300 text-sm mb-1">Case 2: Strictly Positive Integers (x<sub>i</sub> &ge; 1)</h4>
+        <p class="text-[var(--muted-foreground)] mb-2">Equation: x<sub>1</sub> + x<sub>2</sub> + ... + x<sub>n</sub> = r &nbsp; (every bin gets &ge; 1)</p>
+        <div class="p-2 bg-[#202024] rounded text-center text-sm font-mono text-blue-300">
+          <span class="formula-badge">C(r - 1, n - 1)</span>
+        </div>
+        <p class="text-[10px] text-gray-400 mt-1"><em>(Placing n-1 divider bars into the r-1 gaps between stars!)</em></p>
+      </div>
+    </div>
+
+    <!-- Worked Example -->
+    <div class="bg-[#202024] p-3 rounded border border-[var(--border)] text-xs font-mono text-gray-300">
+      <p class="text-white font-bold">Worked GATE Problem:</p>
+      <p>How many non-negative integer solutions exist for: a + b + c + d = 12?</p>
+      <p class="text-emerald-400">Here r = 12 (stars), n = 4 variables (bins).</p>
+      <p class="text-purple-300">Total Solutions = C(4 + 12 - 1, 12) = C(15, 12) = C(15, 3) = (15 &times; 14 &times; 13) / (3 &times; 2 &times; 1) = <strong>455</strong>.</p>
+    </div>
+  </div>
+
+  <!-- 4. GENERATING FUNCTIONS -->
+  <div class="content-box border-l-4 border-l-purple-500">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">3️⃣ Ordinary Generating Functions (OGF)</h2>
+    <p class="text-sm text-gray-300 mb-3">An algebraic power series representing a discrete sequence: <code>G(x) = a<sub>0</sub> + a<sub>1</sub>x + a<sub>2</sub>x<sup>2</sup> + ... = &sum; a<sub>n</sub>x<sup>n</sup></code>.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1">
+        <p class="text-purple-300 font-bold">Core Closed-Form Expansions:</p>
+        <p>1 / (1 - x) = 1 + x + x<sup>2</sup> + x<sup>3</sup> + ...</p>
+        <p>1 / (1 - ax) = 1 + ax + a<sup>2</sup>x<sup>2</sup> + a<sup>3</sup>x<sup>3</sup> + ...</p>
+        <p>(1 + x)<sup>n</sup> = &sum;<sub>k=0</sub><sup>n</sup> C(n, k) x<sup>k</sup></p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1">
+        <p class="text-emerald-300 font-bold">The Multi-Choose Expansion:</p>
+        <p>1 / (1 - x)<sup>k</sup> = &sum;<sub>n=0</sub><sup>&infin;</sup> C(n + k - 1, n) x<sup>n</sup></p>
+        <p class="text-[10px] text-gray-400 font-sans mt-2">The coefficient of x<sup>r</sup> in (1 - x)<sup>-k</sup> directly equals the Stars &amp; Bars solution C(k + r - 1, r)!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: The Stars &amp; Bars Variables: n vs r</h4>
+      <p class="text-sm text-gray-300">Always be clear about which number is the items and which is the bins:
+        <br>• <strong>r = number of identical items (stars)</strong>
+        <br>• <strong>n = number of distinct bins / variables</strong>
+        <br>The formula is <code>C(n + r - 1, r)</code>, NEVER <code>C(r + n - 1, n)</code>!
+      </p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Lower Bound Offsets</h4>
+      <p class="text-sm text-gray-300">If constraints specify <code>x<sub>1</sub> &ge; 2, x<sub>2</sub> &ge; 3, x<sub>3</sub> &ge; 0</code> for <code>x<sub>1</sub> + x<sub>2</sub> + x<sub>3</sub> = 15</code>:
+        <br>Substitute: <code>y<sub>1</sub> = x<sub>1</sub> - 2 &ge; 0</code> and <code>y<sub>2</sub> = x<sub>2</sub> - 3 &ge; 0</code>.
+        <br>New Equation: <code>y<sub>1</sub> + y<sub>2</sub> + x<sub>3</sub> = 15 - 2 - 3 = 10</code>.
+        <br>Now apply standard non-negative formula: <code>C(3 + 10 - 1, 10) = C(12, 10) = 66</code>!
+      </p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to Discrete Math Index
+    </a>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 8: Recurrence Relations</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔄</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #8b5cf6; background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #c084fc; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to Discrete Math Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🔄 Module 8: Recurrence Relations</h1>
+    <p class="text-[var(--muted-foreground)]">Characteristic Roots Method, Non-Homogeneous Particular Solutions & Master Theorem</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">📖 Core Fundamental Theory: What is a Recurrence Relation?</h2>
+    <p class="text-sm text-gray-300 mb-3">A <strong>Recurrence Relation</strong> expresses the n-th term of a sequence <code>a<sub>n</sub></code> recursively as a function of one or more previous terms (<code>a<sub>n-1</sub>, a<sub>n-2</sub>, ...</code>). The <strong>Degree / Order</strong> is the difference between the highest and lowest index (e.g. <code>a<sub>n</sub> = 5a<sub>n-1</sub> - 6a<sub>n-2</sub></code> has order 2).</p>
+  </div>
+
+  <!-- 2. HOMOGENEOUS RECURRENCE RELATIONS -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">1️⃣ Linear Homogeneous Recurrences (Characteristic Roots)</h2>
+    <p class="text-sm text-gray-300 mb-3">Equation of the form: <code>c<sub>0</sub> a<sub>n</sub> + c<sub>1</sub> a<sub>n-1</sub> + ... + c<sub>k</sub> a<sub>n-k</sub> = 0</code>.</p>
+    
+    <div class="bg-[#202024] p-4 rounded border border-[var(--border)] mb-4 text-xs font-mono">
+      <h4 class="font-bold text-white mb-2 text-sm font-sans">Step 1: Write Characteristic Equation</h4>
+      <p class="text-purple-300">Substitute a<sub>n</sub> = r<sup>n</sup> &rarr; c<sub>0</sub> r<sup>k</sup> + c<sub>1</sub> r<sup>k-1</sup> + ... + c<sub>k</sub> = 0</p>
+      
+      <h4 class="font-bold text-white mt-3 mb-2 text-sm font-sans">Step 2: Solve for Roots r</h4>
+      <div class="space-y-2 text-gray-300">
+        <p>• <strong>Case 1: Distinct Real Roots (r<sub>1</sub> &ne; r<sub>2</sub>):</strong><br>
+           &nbsp;&nbsp;<span class="text-emerald-400 font-bold">a<sub>n</sub> = C<sub>1</sub> (r<sub>1</sub>)<sup>n</sup> + C<sub>2</sub> (r<sub>2</sub>)<sup>n</sup></span></p>
+        <p>• <strong>Case 2: Repeated Real Roots (root r with multiplicity m):</strong><br>
+           &nbsp;&nbsp;<span class="text-blue-300 font-bold">a<sub>n</sub> = (C<sub>1</sub> + C<sub>2</sub>n + C<sub>3</sub>n<sup>2</sup> + ... + C<sub>m</sub>n<sup>m-1</sup>) r<sup>n</sup></span></p>
+      </div>
+    </div>
+
+    <!-- Worked Example -->
+    <div class="bg-[#121215] p-3 border border-[var(--border)] rounded text-xs font-mono text-gray-300 space-y-1">
+      <p class="text-white font-bold">Example: a<sub>n</sub> = 5a<sub>n-1</sub> - 6a<sub>n-2</sub> with a<sub>0</sub> = 1, a<sub>1</sub> = 4.</p>
+      <p>1. Characteristic equation: r<sup>2</sup> - 5r + 6 = 0 &rarr; (r - 2)(r - 3) = 0 &rarr; <strong>r<sub>1</sub> = 2, r<sub>2</sub> = 3</strong>.</p>
+      <p>2. General solution: a<sub>n</sub> = C<sub>1</sub>(2<sup>n</sup>) + C<sub>2</sub>(3<sup>n</sup>).</p>
+      <p>3. Initial values: a<sub>0</sub> = C<sub>1</sub> + C<sub>2</sub> = 1 &nbsp;|&nbsp; a<sub>1</sub> = 2C<sub>1</sub> + 3C<sub>2</sub> = 4.</p>
+      <p class="text-emerald-400">Solving gives C<sub>1</sub> = -1, C<sub>2</sub> = 2 &rarr; <strong>a<sub>n</sub> = 2(3<sup>n</sup>) - 2<sup>n</sup></strong>.</p>
+    </div>
+  </div>
+
+  <!-- 3. NON-HOMOGENEOUS RECURRENCES -->
+  <div class="content-box border-l-4 border-l-purple-500">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">2️⃣ Non-Homogeneous Recurrences: a<sub>n</sub> = a<sub>n</sub><sup>(h)</sup> + a<sub>n</sub><sup>(p)</sup></h2>
+    <p class="text-sm text-gray-300 mb-3">When the RHS is a non-zero driving function <code>F(n)</code>, total solution = Homogeneous Solution + Particular Solution.</p>
+
+    <div class="overflow-x-auto mb-2 text-xs">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border border-[var(--border)] text-gray-300">
+            <th class="p-2 border border-[var(--border)]">Form of F(n)</th>
+            <th class="p-2 border border-[var(--border)]">Condition on Base s</th>
+            <th class="p-2 border border-[var(--border)] text-emerald-400">Trial Form for Particular Solution a<sub>n</sub><sup>(p)</sup></th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-300 font-mono">
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)]">c &middot; s<sup>n</sup></td>
+            <td class="p-2 border border-[var(--border)] font-sans">s is NOT a root</td>
+            <td class="p-2 border border-[var(--border)] text-blue-300">A &middot; s<sup>n</sup></td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)]">c &middot; s<sup>n</sup></td>
+            <td class="p-2 border border-[var(--border)] font-sans">s is a root with multiplicity m</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400 font-bold">A &middot; n<sup>m</sup> &middot; s<sup>n</sup></td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)]">Polynomial of degree d</td>
+            <td class="p-2 border border-[var(--border)] font-sans">r = 1 is NOT a root</td>
+            <td class="p-2 border border-[var(--border)] text-purple-300">A<sub>d</sub> n<sup>d</sup> + ... + A<sub>0</sub></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4. MASTER THEOREM (ALGORITHMIC RECURRENCES) -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">3️⃣ Master Theorem for Divide-and-Conquer Recurrences</h2>
+    <p class="text-sm text-gray-300 mb-2">For recurrences of the form: <span class="formula-badge">T(n) = a T(n / b) + &Theta;(n<sup>k</sup> log<sup>p</sup> n)</span> (where a &ge; 1, b &gt; 1):</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-300 font-mono mt-3">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-blue-300 font-sans">Case 1: log<sub>b</sub> a &gt; k</strong>
+        <p class="text-emerald-400 mt-1">T(n) = &Theta;(n<sup>log<sub>b</sub> a</sup>)</p>
+      </div>
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-purple-300 font-sans">Case 2: log<sub>b</sub> a = k</strong>
+        <p class="text-emerald-400 mt-1">T(n) = &Theta;(n<sup>k</sup> log<sup>p + 1</sup> n)</p>
+      </div>
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-yellow-300 font-sans">Case 3: log<sub>b</sub> a &lt; k</strong>
+        <p class="text-emerald-400 mt-1">T(n) = &Theta;(n<sup>k</sup> log<sup>p</sup> n)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: Never Apply Initial Conditions to Homogeneous Part Alone!</h4>
+      <p class="text-sm text-gray-300">If solving a non-homogeneous recurrence <code>a<sub>n</sub> = a<sub>n</sub><sup>(h)</sup> + a<sub>n</sub><sup>(p)</sup></code>, you <strong>MUST</strong> write down the complete solution <code>a<sub>n</sub></code> first, and THEN substitute <code>a<sub>0</sub>, a<sub>1</sub></code> to solve for constants C<sub>1</sub>, C<sub>2</sub>! Solving for constants before adding a<sub>n</sub><sup>(p)</sup> will give 100% wrong answers.</p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Resonance / Root Collision in Particular Solution</h4>
+      <p class="text-sm text-gray-300">If the RHS is <code>F(n) = 3<sup>n</sup></code>, but <code>r = 3</code> was already a root of the homogeneous characteristic equation, your trial particular solution CANNOT be <code>A &middot; 3<sup>n</sup></code>! It must be multiplied by <code>n</code> &rarr; <span class="formula-badge">a<sub>n</sub><sup>(p)</sup> = A &middot; n &middot; 3<sup>n</sup></span>.</p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to Discrete Math Index
+    </a>
+  </div>
+
+</body>
+</html>

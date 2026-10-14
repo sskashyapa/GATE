@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 6: Functions & Pigeonhole Principle</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #8b5cf6; background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #c084fc; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to Discrete Math Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🎯 Module 6: Functions & Pigeonhole Principle</h1>
+    <p class="text-[var(--muted-foreground)]">Injections, Surjections, Bijections, Stirling Numbers & Generalized Pigeonhole Math</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">📖 Core Fundamental Theory: Function Definitions</h2>
+    <p class="text-sm text-gray-300 mb-3">A function <code>f: A &rarr; B</code> assigns every single element of Domain A to <strong>EXACTLY ONE</strong> element of Codomain B. Let <code>|A| = m</code> and <code>|B| = n</code>.</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-blue-300 text-sm mb-1">1. Injective (1-to-1)</h4>
+        <p>Distinct inputs give distinct outputs: <code>f(a) = f(b) &rarr; a = b</code>.</p>
+        <p class="text-purple-300 mt-1">Requires: <strong>m &le; n</strong></p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-300 text-sm mb-1">2. Surjective (Onto)</h4>
+        <p>Every element in codomain is mapped: <strong>Range = Codomain</strong>.</p>
+        <p class="text-purple-300 mt-1">Requires: <strong>m &ge; n</strong></p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-yellow-300 text-sm mb-1">3. Bijective</h4>
+        <p>Both 1-to-1 AND Onto. Inverse function <code>f<sup>-1</sup></code> exists!</p>
+        <p class="text-purple-300 mt-1">Requires: <strong>m = n</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MASTER FUNCTION COUNTING FORMULAS -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">1️⃣ Master Counting Formulas (Domain m &rarr; Codomain n)</h2>
+    
+    <div class="overflow-x-auto mb-2">
+      <table class="w-full text-xs text-left border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border border-[var(--border)] text-gray-300">
+            <th class="p-2.5 border border-[var(--border)]">Type of Function</th>
+            <th class="p-2.5 border border-[var(--border)] text-emerald-400">Total Count Formula</th>
+            <th class="p-2.5 border border-[var(--border)]">Condition</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-300 font-mono">
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-sans">Total Functions</td>
+            <td class="p-2 border border-[var(--border)] text-purple-300 font-bold">n<sup>m</sup></td>
+            <td class="p-2 border border-[var(--border)] font-sans">Any m, n</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-sans">Injective (One-to-One)</td>
+            <td class="p-2 border border-[var(--border)] text-blue-300 font-bold">P(n, m) = n! / (n - m)!</td>
+            <td class="p-2 border border-[var(--border)] font-sans">m &le; n (0 if m &gt; n)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-sans">Surjective (Onto)</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-300 font-bold">&sum;<sub>k=0</sub><sup>n</sup> (-1)<sup>k</sup> C(n, k) (n - k)<sup>m</sup></td>
+            <td class="p-2 border border-[var(--border)] font-sans">m &ge; n (0 if m &lt; n)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-sans">Bijective (One-to-One &amp; Onto)</td>
+            <td class="p-2 border border-[var(--border)] text-yellow-300 font-bold">n!</td>
+            <td class="p-2 border border-[var(--border)] font-sans">Strictly m = n</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. PIGEONHOLE PRINCIPLE (PHP) & GENERALIZED PHP -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">2️⃣ The Pigeonhole Principle (PHP) Math</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white text-sm mb-1">Generalized PHP Formula</h4>
+        <p class="text-[var(--muted-foreground)] mb-2">If <code>N</code> objects (pigeons) are distributed into <code>k</code> boxes (pigeonholes):</p>
+        <p class="text-emerald-400 font-mono text-sm py-1"><span class="formula-badge">At least one box has &ge; &lceil; N / k &rceil; items</span></p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-purple-300 text-sm mb-1">Guaranteed Category Selection (Reverse PHP)</h4>
+        <p class="text-[var(--muted-foreground)] mb-2">Minimum items <code>N</code> to pick to GUARANTEE that at least <code>r</code> items belong to the same of <code>k</code> categories:</p>
+        <p class="text-purple-300 font-mono text-sm py-1"><span class="formula-badge">N = k &times; (r - 1) + 1</span></p>
+      </div>
+    </div>
+
+    <!-- Worked PHP Example -->
+    <div class="bg-[#202024] p-4 rounded border border-[var(--border)] text-xs font-mono text-gray-300 space-y-1">
+      <p class="text-white font-bold">Worked GATE Problem:</p>
+      <p>How many cards must be selected from a standard 52-card deck (4 suits: Hearts, Spades, Diamonds, Clubs) to guarantee that at least 3 cards belong to the same suit?</p>
+      <p class="text-emerald-400">Categories k = 4, Desired count r = 3.</p>
+      <p class="text-purple-300">N = 4 &times; (3 - 1) + 1 = 4 &times; 2 + 1 = <strong>9 cards</strong>.</p>
+      <p class="text-gray-400 font-sans text-[11px] mt-1">(Worst case: you pick 2 hearts, 2 spades, 2 diamonds, 2 clubs = 8 cards without hitting 3. The 9th card guarantees 3 of a suit!).</p>
+    </div>
+  </div>
+
+  <!-- 4. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">3️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: The Total Functions Exponent Order</h4>
+      <p class="text-sm text-gray-300">Total functions from A to B is <strong>|B|<sup>|A|</sup> (n<sup>m</sup>)</strong>, NOT m<sup>n</sup>!
+        <br><em>Why?</em> Every single element in Domain A independently has <code>n</code> choices in Codomain B: <code>n &times; n &times; ... (m times) = n<sup>m</sup></code>.
+      </p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Onto Functions when m &lt; n</h4>
+      <p class="text-sm text-gray-300">If domain size is smaller than codomain size (m &lt; n), it is mathematically impossible to cover all elements in codomain. The number of onto functions is <strong>0</strong>!</p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to Discrete Math Index
+    </a>
+  </div>
+
+</body>
+</html>

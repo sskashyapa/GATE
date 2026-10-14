@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 9: Graph Theory: Paths & Cycles</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕸️</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #8b5cf6; background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #c084fc; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to Discrete Math Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🕸️ Module 9: Graph Theory: Paths & Cycles</h1>
+    <p class="text-[var(--muted-foreground)]">Handshaking Lemma, Bipartite Graphs, Eulerian Circuits, Hamiltonian Cycles & Coloring</p>
+  </div>
+
+  <!-- 1. HANDSHAKING LEMMA -->
+  <div class="content-box border-l-4 border-l-purple-500">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">1️⃣ The Handshaking Lemma & Degree Invariants</h2>
+    <p class="text-sm text-gray-300 mb-3">In every undirected graph <code>G = (V, E)</code>, every edge contributes exactly 1 degree to each of its two endpoints:</p>
+
+    <div class="p-3 bg-purple-500/10 border border-purple-500/30 rounded text-center text-base font-mono text-purple-200 mb-4">
+      <span class="formula-badge">&sum;<sub>v &isin; V</sub> deg(v) = 2 &times; |E|</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-emerald-400 text-sm">Odd Degree Invariant:</strong>
+        <p class="mt-1 text-[var(--muted-foreground)]">In any undirected graph, the <strong>number of vertices having odd degree is ALWAYS EVEN</strong>! (If a degree sequence contains an odd number of odd values, that graph is impossible to draw!).</p>
+      </div>
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-blue-300 text-sm">Regular Graphs (k-regular):</strong>
+        <p class="mt-1 text-[var(--muted-foreground)]">Every vertex has degree <code>k</code> &rarr; <code>n &times; k = 2|E|</code> &rarr; <span class="formula-badge">|E| = (n &times; k) / 2</span>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. BIPARTITE GRAPHS -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">2️⃣ Bipartite Graphs (Odd Cycle Invariant)</h2>
+    <p class="text-sm text-gray-300 mb-3">A graph is <strong>Bipartite</strong> if its vertex set can be split into two disjoint sets <code>V<sub>1</sub>, V<sub>2</sub></code> such that every edge connects a vertex in V<sub>1</sub> to V<sub>2</sub>.</p>
+
+    <div class="p-3 bg-[#202024] rounded border border-blue-500/30 text-center mb-4">
+      <p class="text-xs text-gray-300 mb-1">The Golden Test for Bipartiteness:</p>
+      <p class="text-sm font-mono text-blue-300 font-bold">A graph is Bipartite &hArr; It contains NO ODD CYCLES (no C<sub>3</sub>, C<sub>5</sub>, C<sub>7</sub>...)!</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-white">Complete Bipartite Graph K<sub>m, n</sub>:</strong>
+        <p class="mt-1 text-[var(--muted-foreground)]">Vertices: <strong>m + n</strong> &nbsp;|&nbsp; Edges: <strong>m &times; n</strong>.</p>
+      </div>
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-white">Max Edges in Bipartite Graph (n vertices):</strong>
+        <p class="mt-1 font-mono text-emerald-400"><span class="formula-badge">|E|<sub>max</sub> = &lfloor; n<sup>2</sup> / 4 &rfloor;</span></p>
+        <p class="text-[10px] text-gray-400 mt-1">(Achieved when partitions are as equal as possible: &lfloor;n/2&rfloor; &times; &lceil;n/2&rceil;).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. EULERIAN VS HAMILTONIAN GRAPHS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">3️⃣ Eulerian vs Hamiltonian Graphs (Edges vs Vertices)</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300 mb-4">
+      <!-- Eulerian -->
+      <div class="p-4 bg-[#121215] border border-[var(--border)] rounded space-y-2">
+        <h4 class="font-bold text-emerald-400 text-sm">Eulerian Graphs (Visits every EDGE once)</h4>
+        <p>• <strong>Eulerian Circuit:</strong> Connected graph where <strong>EVERY vertex has an EVEN degree</strong>.</p>
+        <p>• <strong>Eulerian Path:</strong> Connected graph with <strong>EXACTLY 0 or 2 vertices of odd degree</strong>.</p>
+        <p class="text-emerald-300 font-sans text-[11px]"><em>Decision problem is in P (Linear time check!).</em></p>
+      </div>
+
+      <!-- Hamiltonian -->
+      <div class="p-4 bg-[#121215] border border-[var(--border)] rounded space-y-2">
+        <h4 class="font-bold text-orange-400 text-sm">Hamiltonian Graphs (Visits every VERTEX once)</h4>
+        <p>• <strong>Hamiltonian Cycle:</strong> Closed cycle visiting every vertex exactly once. (NP-Complete!).</p>
+        <p>• <strong>Dirac's Theorem (Sufficient):</strong> If n &ge; 3 and <code>deg(v) &ge; n / 2</code> for ALL vertices, then G is Hamiltonian.</p>
+        <p>• <strong>Ore's Theorem (Sufficient):</strong> If <code>deg(u) + deg(v) &ge; n</code> for all non-adjacent pairs (u, v), then G is Hamiltonian.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. GRAPH COLORING & INDEPENDENT SETS -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">4️⃣ Graph Coloring &amp; Gallai's Theorem</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1.5">
+        <h4 class="font-bold text-white text-sm">Chromatic Number &chi;(G):</h4>
+        <p>Minimum colors to color vertices so no adjacent vertices share a color.</p>
+        <p>• Complete Graph K<sub>n</sub>: <strong>&chi;(K<sub>n</sub>) = n</strong></p>
+        <p>• Bipartite Graph: <strong>&chi;(G) = 2</strong> (iff it has at least 1 edge)</p>
+        <p>• Cycle C<sub>n</sub>: <strong>&chi;(C<sub>n</sub>) = 2</strong> if n even, <strong>3</strong> if n odd.</p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1.5">
+        <h4 class="font-bold text-white text-sm">Gallai's Identity:</h4>
+        <p>Let &alpha;(G) = Maximum Independent Set size.</p>
+        <p>Let &beta;(G) = Minimum Vertex Cover size.</p>
+        <div class="p-2 bg-[#202024] rounded text-center text-sm font-mono text-emerald-300">
+          <span class="formula-badge">&alpha;(G) + &beta;(G) = |V|</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">5️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: Eulerian Circuit vs Path Odd Degrees</h4>
+      <p class="text-sm text-gray-300">
+        • For an <strong>Euler Circuit</strong> (returns to start), you need <strong>0 odd-degree vertices</strong>.
+        <br>• If a graph has <strong>2 odd-degree vertices</strong>, it has an Euler Path (starts at one odd vertex, ends at the other), but NO Euler Circuit!
+        <br>• If a graph has <strong>4 odd-degree vertices</strong>, it has NEITHER an Euler Path NOR an Euler Circuit!
+      </p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Dirac's Theorem is SUFFICIENT, NOT Necessary!</h4>
+      <p class="text-sm text-gray-300">If a graph does NOT satisfy <code>deg(v) &ge; n/2</code>, you CANNOT conclude it is not Hamiltonian! For example, a simple cycle C<sub>10</sub> has deg(v) = 2 &lt; 5 for all vertices, yet it is obviously Hamiltonian!</p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to Discrete Math Index
+    </a>
+  </div>
+
+</body>
+</html>

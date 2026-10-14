@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 3: Sets & Inclusion-Exclusion</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⭕</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #8b5cf6; background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #c084fc; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to Discrete Math Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">⭕ Module 3: Sets & Principle of Inclusion-Exclusion</h1>
+    <p class="text-[var(--muted-foreground)]">Power Sets, Cartesian Products, Venn Invariants & 3-Set PIE Formulas</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">📖 Core Fundamental Theory: Sets & Power Sets</h2>
+    <p class="text-sm text-gray-300 mb-3">A <strong>Set</strong> is an unordered collection of distinct objects. Cardinality <code>|A|</code> denotes the number of elements in set A.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 text-xs">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white mb-1">Subsets vs Elements (&sube; vs &isin;)</h4>
+        <p class="text-[var(--muted-foreground)] mb-2">• <code>x &isin; A</code>: x is an element of A.<br>• <code>A &sube; B &hArr; &forall;x (x &isin; A &rarr; x &isin; B)</code>: every element in A belongs to B.</p>
+        <p class="text-emerald-300">• Empty set &empty; is a subset of EVERY set (&empty; &sube; A is universally true!).</p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white mb-1">Power Set P(A)</h4>
+        <p class="text-[var(--muted-foreground)] mb-2">The set of all possible subsets of A, including &empty; and A itself.</p>
+        <p class="text-purple-300 font-mono">• |P(A)| = <strong>2<sup>n</sup></strong> &nbsp;(where |A| = n)</p>
+        <p class="text-blue-300 font-mono">• |P(P(A))| = <strong>2<sup>2<sup>n</sup></sup></strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. SET OPERATIONS & PROPERTIES -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">1️⃣ Set Operations & Symmetric Difference</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-300 mb-4">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-blue-300">Relative Difference (A - B):</strong>
+        <p class="font-mono mt-1 text-purple-200">A - B = A &cap; B&#773;</p>
+        <p class="text-[var(--muted-foreground)] mt-1">Elements in A that are NOT in B.</p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-emerald-300">Symmetric Difference (A &oplus; B):</strong>
+        <p class="font-mono mt-1 text-emerald-200">A &oplus; B = (A - B) &cup; (B - A)</p>
+        <p class="font-mono text-emerald-200">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= (A &cup; B) - (A &cap; B)</p>
+        <p class="text-[var(--muted-foreground)] mt-1">Elements in A or B, but NOT in both!</p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-purple-300">Cartesian Product (A &times; B):</strong>
+        <p class="font-mono mt-1 text-purple-200">{(a, b) | a &isin; A, b &isin; B}</p>
+        <p class="text-[var(--muted-foreground)] mt-1">|A &times; B| = |A| &times; |B|</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. PRINCIPLE OF INCLUSION-EXCLUSION (PIE) -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">2️⃣ Principle of Inclusion-Exclusion (PIE)</h2>
+    <p class="text-sm text-gray-300 mb-3">To find the size of the union of multiple sets without double-counting overlaps:</p>
+
+    <div class="bg-[#202024] p-4 rounded border border-[var(--border)] mb-4 text-xs font-mono space-y-2">
+      <p class="text-blue-300 font-bold">Two Sets:</p>
+      <p>|A &cup; B| = |A| + |B| - |A &cap; B|</p>
+
+      <p class="text-emerald-300 font-bold pt-2">Three Sets (Master GATE Formula):</p>
+      <p>|A &cup; B &cup; C| = |A| + |B| + |C| - (|A &cap; B| + |B &cap; C| + |C &cap; A|) + |A &cap; B &cap; C|</p>
+    </div>
+
+    <!-- Venn Diagram Sub-Regions -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-purple-300">Exactly One Set:</strong>
+        <p class="mt-1 font-mono text-[11px] text-gray-300">&sum;|A| - 2&sum;|A&cap;B| + 3|A&cap;B&cap;C|</p>
+      </div>
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-emerald-300">Exactly Two Sets:</strong>
+        <p class="mt-1 font-mono text-[11px] text-gray-300">&sum;|A&cap;B| - 3|A&cap;B&cap;C|</p>
+      </div>
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-blue-300">At Least Two Sets:</strong>
+        <p class="mt-1 font-mono text-[11px] text-gray-300">&sum;|A&cap;B| - 2|A&cap;B&cap;C|</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. WORKED NUMERICAL EXAMPLE -->
+  <div class="content-box border-l-4 border-l-purple-500">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">3️⃣ Classic GATE PIE Numerical (Divisibility)</h2>
+    <div class="bg-[#121215] p-4 border border-[var(--border)] rounded text-xs font-mono text-gray-300 space-y-2">
+      <p class="text-white font-bold">Problem: How many integers between 1 and 1000 are divisible by 2, 3, or 5?</p>
+      <p>• |A| (divisible by 2) = &lfloor;1000 / 2&rfloor; = <strong>500</strong></p>
+      <p>• |B| (divisible by 3) = &lfloor;1000 / 3&rfloor; = <strong>333</strong></p>
+      <p>• |C| (divisible by 5) = &lfloor;1000 / 5&rfloor; = <strong>200</strong></p>
+      <p>• |A &cap; B| (divisible by lcm(2,3)=6) = &lfloor;1000 / 6&rfloor; = <strong>166</strong></p>
+      <p>• |B &cap; C| (divisible by lcm(3,5)=15) = &lfloor;1000 / 15&rfloor; = <strong>66</strong></p>
+      <p>• |A &cap; C| (divisible by lcm(2,5)=10) = &lfloor;1000 / 10&rfloor; = <strong>100</strong></p>
+      <p>• |A &cap; B &cap; C| (divisible by lcm(2,3,5)=30) = &lfloor;1000 / 30&rfloor; = <strong>33</strong></p>
+      <div class="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded text-emerald-300 mt-2">
+        |A &cup; B &cup; C| = (500 + 333 + 200) - (166 + 66 + 100) + 33 = 1033 - 332 + 33 = <strong>734</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: The Power Set of Empty Set</h4>
+      <p class="text-sm text-gray-300">
+        • If A = &empty;, then |A| = 0.
+        <br>• The power set <code>P(&empty;) = {&empty;}</code> &rarr; |P(&empty;)| = 2<sup>0</sup> = <strong>1</strong> (it is NOT empty, it contains the empty set!).
+        <br>• |P(P(&empty;))| = 2<sup>1</sup> = <strong>2</strong>, and |P(P(P(&empty;)))| = 2<sup>2</sup> = <strong>4</strong>.
+      </p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: &empty; &sube; A vs &empty; &isin; A</h4>
+      <p class="text-sm text-gray-300">
+        • <code>&empty; &sube; A</code> is <strong>ALWAYS TRUE</strong> for any set A.
+        <br>• <code>&empty; &isin; A</code> is TRUE only if &empty; is explicitly written as an element inside A (e.g. <code>A = {&empty;, 1, 2}</code>).
+      </p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to Discrete Math Index
+    </a>
+  </div>
+
+</body>
+</html>
