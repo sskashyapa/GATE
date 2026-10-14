@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 1: Layering & Switching</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to CN Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🌐 Module 1: Layering & Switching Architecture</h1>
+    <p class="text-[var(--muted-foreground)]">OSI vs TCP/IP Stacks, Switching Mechanisms, Network Delays & Bandwidth-Delay Product</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY: WHY LAYERING? -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">📖 Core Fundamental Theory: Why Protocol Layering?</h2>
+    <p class="text-sm text-gray-300 mb-3">A computer network must handle physical voltages, error detection, finding paths across billions of routers, and delivering chat messages to specific browser tabs. Solving all of this in a single monolithic program would be an unmaintainable nightmare.</p>
+    <p class="text-sm text-gray-300 mb-4"><strong>The Solution: Layered Architecture.</strong> Each layer provides a clean service to the layer above it, using services from the layer below it, while keeping its internal implementation hidden (Abstraction & Modularity).</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white mb-2 text-sm">Protocol Data Units (PDU) & Encapsulation</h4>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-2">
+          <li>• <strong class="text-blue-300">Application Layer:</strong> Data / Message</li>
+          <li>• <strong class="text-purple-300">Transport Layer:</strong> Segment (TCP) / Datagram (UDP) <span class="text-gray-400">[Adds Port numbers]</span></li>
+          <li>• <strong class="text-emerald-300">Network Layer:</strong> Packet / Datagram <span class="text-gray-400">[Adds IP addresses]</span></li>
+          <li>• <strong class="text-orange-300">Data Link Layer:</strong> Frame <span class="text-gray-400">[Adds MAC addresses + CRC trailer]</span></li>
+          <li>• <strong class="text-red-300">Physical Layer:</strong> Raw Bits (0s and 1s across electrical/optical signals)</li>
+        </ul>
+      </div>
+
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white mb-2 text-sm">OSI (7 Layers) vs TCP/IP (4/5 Layers)</h4>
+        <p class="text-xs text-gray-300 mb-2">The OSI model is a theoretical benchmark; the TCP/IP model is the actual working model of the Internet.</p>
+        <p class="text-xs text-[var(--muted-foreground)]">In TCP/IP, the top 3 OSI layers (<strong>Application, Presentation, Session</strong>) are collapsed into one single <strong>Application Layer</strong>.</p>
+        <div class="mt-3 p-2 bg-blue-500/10 border border-blue-500/30 rounded text-xs text-blue-200">
+          <strong>GATE Rule:</strong> Presentation handles Syntax, Encryption & Compression. Session handles Dialog control & Checkpoints.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. LAYER RESPONSIBILITIES & ADDRESSING -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-4">2️⃣ Layer Responsibilities & Types of Addresses</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border-b border-[var(--border)]">
+            <th class="p-3">Layer</th>
+            <th class="p-3">Core Responsibility</th>
+            <th class="p-3">Addressing Scheme</th>
+            <th class="p-3">Devices Operating Here</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[var(--border)] text-[var(--muted-foreground)]">
+          <tr>
+            <td class="p-3 font-bold text-blue-300">Application (L7)</td>
+            <td class="p-3">Network services to user applications (HTTP, DNS, SMTP, FTP).</td>
+            <td class="p-3">Domain Names / URLs</td>
+            <td class="p-3">Gateways, Proxies</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-bold text-purple-300">Transport (L4)</td>
+            <td class="p-3">End-to-End (Process-to-Process) communication, segmentation, flow/error control.</td>
+            <td class="p-3 font-mono text-purple-400">Port Number (16-bit)</td>
+            <td class="p-3">Firewalls, End hosts</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-bold text-emerald-300">Network (L3)</td>
+            <td class="p-3">Host-to-Host delivery, Logical addressing, Routing across networks.</td>
+            <td class="p-3 font-mono text-emerald-400">Logical Address (IP: 32-bit v4, 128-bit v6)</td>
+            <td class="p-3">Routers, L3 Switches</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-bold text-orange-300">Data Link (L2)</td>
+            <td class="p-3">Hop-to-Hop (Node-to-Node) delivery within same physical link, framing, MAC.</td>
+            <td class="p-3 font-mono text-orange-400">Physical Address (MAC: 48-bit)</td>
+            <td class="p-3">Switches, Bridges, NIC</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-bold text-red-300">Physical (L1)</td>
+            <td class="p-3">Transmission of raw unstructured bits over physical medium. Modulation.</td>
+            <td class="p-3">-</td>
+            <td class="p-3">Hubs, Repeaters, Cables</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. CIRCUIT SWITCHING VS PACKET SWITCHING -->
+  <div class="content-box border-l-4 border-l-purple-500">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">3️⃣ Switching Architectures</h2>
+    <p class="text-sm text-gray-300 mb-4">How is data routed between source and destination when multiple paths exist?</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-400 mb-2">Circuit Switching (e.g., Traditional Telephone)</h4>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-1.5 list-disc list-inside">
+          <li><strong>3 Phases:</strong> Connection Setup ➔ Data Transfer ➔ Connection Teardown.</li>
+          <li><strong>Dedicated Bandwidth:</strong> Reserved resources along the entire path. No queuing delay during transfer.</li>
+          <li><strong>Drawback:</strong> Inefficient for bursty traffic; wasted resources if channel is idle.</li>
+        </ul>
+      </div>
+
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-blue-400 mb-2">Packet Switching (The Internet Standard)</h4>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-1.5 list-disc list-inside">
+          <li>Data is broken into independent chunks called <strong>Packets</strong>.</li>
+          <li><strong>Store-and-Forward:</strong> Each intermediate router must receive the entire packet before forwarding it.</li>
+          <li><strong>Statistical Multiplexing:</strong> Resources shared on-demand; handles bursty internet traffic efficiently.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-4 p-3 bg-[#18181b] border border-[var(--border)] rounded text-xs text-gray-300">
+      <strong>Datagram vs Virtual Circuit (VC) Packet Switching:</strong>
+      <p class="mt-1 text-[var(--muted-foreground)]">In <strong>Datagram</strong> packet switching (Connectionless, IPv4), each packet is treated independently and can follow different paths, arriving out-of-order. In <strong>Virtual Circuit</strong> packet switching (Connection-oriented, ATM/Frame Relay), a logical path is pre-established and all packets follow the same path in order.</p>
+    </div>
+  </div>
+
+  <!-- 4. NETWORK DELAYS - THE FORMULAS & MATH -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">4️⃣ Network Delays: The Golden Formulas</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">Almost every GATE question in Chapter 1 tests calculating one of these four components of total delay:</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      
+      <!-- Transmission Delay -->
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <div class="flex justify-between items-start mb-1">
+          <h4 class="font-bold text-blue-300 text-sm">1. Transmission Delay (T<sub>t</sub>)</h4>
+          <span class="formula-badge">T<sub>t</sub> = L / B</span>
+        </div>
+        <p class="text-xs text-gray-400 mb-2">Time taken by the transmitter to push all bits of the packet onto the transmission link.</p>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-1">
+          <li>• <strong>L:</strong> Length of packet in <strong>bits</strong></li>
+          <li>• <strong>B:</strong> Bandwidth of link in <strong>bits/sec (bps)</strong></li>
+          <li>• Depends only on packet size & link bandwidth (independent of distance!).</li>
+        </ul>
+      </div>
+
+      <!-- Propagation Delay -->
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <div class="flex justify-between items-start mb-1">
+          <h4 class="font-bold text-purple-300 text-sm">2. Propagation Delay (T<sub>p</sub>)</h4>
+          <span class="formula-badge">T<sub>p</sub> = d / v</span>
+        </div>
+        <p class="text-xs text-gray-400 mb-2">Time taken for a single bit to travel from sender to receiver across the physical medium.</p>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-1">
+          <li>• <strong>d:</strong> Distance between sender and receiver in <strong>meters</strong></li>
+          <li>• <strong>v:</strong> Velocity of signal (typically 2 × 10<sup>8</sup> m/s in copper/fiber, 3 × 10<sup>8</sup> m/s in air)</li>
+          <li>• Depends only on distance & medium speed (independent of packet size!).</li>
+        </ul>
+      </div>
+
+      <!-- Queuing Delay -->
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-orange-300 text-sm mb-1">3. Queuing Delay (T<sub>q</sub>)</h4>
+        <p class="text-xs text-gray-400">Time a packet spends waiting in router queues (buffers) before transmission. Depends on network congestion.</p>
+      </div>
+
+      <!-- Processing Delay -->
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-red-300 text-sm mb-1">4. Processing Delay (T<sub>proc</sub>)</h4>
+        <p class="text-xs text-gray-400">Time router takes to examine packet header, check bit errors (checksum), and determine the outgoing link.</p>
+      </div>
+
+    </div>
+
+    <!-- Total Delay -->
+    <div class="bg-[#202024] p-4 rounded border border-[var(--border)]">
+      <h4 class="font-bold text-white mb-2 text-sm">Total Point-to-Point Latency (Single Link)</h4>
+      <p class="text-center font-mono text-emerald-400 text-base py-1">Total Delay = T<sub>t</sub> + T<sub>p</sub> + T<sub>q</sub> + T<sub>proc</sub></p>
+      <p class="text-xs text-center text-gray-400 mt-1">(Usually in GATE, unless specified, T<sub>q</sub> and T<sub>proc</sub> are assumed to be negligible/zero).</p>
+    </div>
+  </div>
+
+  <!-- 5. BANDWIDTH-DELAY PRODUCT & PIPELINING -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">5️⃣ Bandwidth-Delay Product (BDP)</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-3">BDP measures the capacity of the link: how many bits can be "in flight" on the transmission wire simultaneously.</p>
+    
+    <div class="text-center font-mono text-blue-300 py-3 border border-blue-500/30 rounded bg-blue-500/10 mb-4">
+      BDP = Bandwidth (B) × Propagation Delay (T<sub>p</sub>)
+    </div>
+    <p class="text-xs text-gray-400 text-center">Think of the link as a pipe: Bandwidth is the cross-sectional area, and Propagation Delay is the pipe length. BDP is the total volume of the pipe in bits!</p>
+  </div>
+
+  <!-- 6. STORE-AND-FORWARD WITH N ROUTERS (GATE NUMERICAL PATTERN) -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">6️⃣ Store-and-Forward with N Intermediate Routers</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-3">A source host sends a message of size <code>M</code> across <code>N</code> intermediate routers to reach the destination.</p>
+    
+    <div class="bg-[#121215] p-4 border border-[var(--border)] rounded mb-4">
+      <p class="text-sm text-gray-300 mb-2">If there are <strong>N intermediate routers</strong>, the total number of hops (links) is <strong>N + 1</strong>.</p>
+      <div class="space-y-2 text-xs font-mono text-emerald-300">
+        <p>• Single Packet Case: Total Time = (N + 1) × T<sub>t</sub> + (N + 1) × T<sub>p</sub></p>
+        <p>• Pipelined Case (Message split into P packets): Total Time = (N + P) × T<sub>t</sub> + (N + 1) × T<sub>p</sub></p>
+      </div>
+    </div>
+    <p class="text-xs text-gray-400"><em>Why (N + P) × T<sub>t</sub>?</em> The first packet takes (N + 1) transmission steps to reach the destination. Every subsequent packet arrives just 1 transmission time step later due to pipelining!</p>
+  </div>
+
+  <!-- 7. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">7️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: Bandwidth is in Powers of 10, Storage in Powers of 2!</h4>
+      <p class="text-sm text-gray-300">In networking:
+        <br>• 1 Kbps = 10<sup>3</sup> bps = 1,000 bps
+        <br>• 1 Mbps = 10<sup>6</sup> bps = 1,000,000 bps
+        <br>• 1 Gbps = 10<sup>9</sup> bps
+        <br>In RAM/Operating Systems, 1 KB = 1024 Bytes = 2<sup>10</sup> Bytes. Do NOT mix these up in network delay calculations!
+      </p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Bits vs Bytes in Bandwidth (bps vs Bps)</h4>
+      <p class="text-sm text-gray-300">Lowercase 'b' is <strong>bits</strong>. Uppercase 'B' is <strong>Bytes</strong>.
+        <br>If a packet is 1 KB (1024 Bytes or 1000 Bytes depending on question) and bandwidth is 1 Mbps, always convert the packet length to <strong>bits</strong>:
+        <br><code>L = 1000 × 8 bits</code> before dividing by <code>B = 10^6 bps</code>!
+      </p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to CN Index
+    </a>
+  </div>
+
+</body>
+</html>
