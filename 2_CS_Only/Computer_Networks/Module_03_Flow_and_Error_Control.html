@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 3: Flow & Error Control Protocols</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔄</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to CN Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🔄 Module 3: Flow & Error Control Protocols</h1>
+    <p class="text-[var(--muted-foreground)]">Stop-and-Wait, Go-Back-N, Selective Repeat, Efficiency & Window Sizing Math</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">📖 Core Fundamental Theory: Flow vs Error Control</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-300 text-sm mb-1">Flow Control (Rate Regulation)</h4>
+        <p class="text-xs text-gray-300">Prevents a high-speed sender from overwhelming and crashing a slower receiver with more frames than its RAM buffers can process.</p>
+      </div>
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-purple-300 text-sm mb-1">Error Control (Reliability)</h4>
+        <p class="text-xs text-gray-300">Detects damaged or lost frames and handles automatic retransmission (Automatic Repeat reQuest - <strong>ARQ</strong>) via Acknowledgments (ACKs) and Timers.</p>
+      </div>
+    </div>
+    <div class="mt-4 p-3 bg-[#18181b] border border-[var(--border)] rounded text-xs text-gray-300">
+      <strong>Piggybacking:</strong> When a receiver has outgoing data of its own to send back to the sender, it attaches its ACK to the outgoing data frame instead of sending a separate ACK frame, saving bandwidth!
+    </div>
+  </div>
+
+  <!-- 2. STOP-AND-WAIT ARQ -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">1️⃣ Stop-and-Wait ARQ</h2>
+    <p class="text-sm text-gray-300 mb-3">Sender transmits <strong>one single frame</strong>, starts a timer, and freezes until it receives an ACK. If the timer expires before ACK arrives, it retransmits the frame.</p>
+
+    <div class="bg-[#202024] p-4 rounded border border-[var(--border)] mb-4">
+      <h4 class="font-bold text-white mb-2 text-sm">Timing Analysis & Efficiency Formula:</h4>
+      <p class="text-xs text-gray-300 mb-2">Total Cycle Time (T) = Transmission time of frame (T<sub>t</sub>) + Propagation time to receiver (T<sub>p</sub>) + Transmission time of ACK (T<sub>ack</sub>) + Propagation time of ACK back (T<sub>p</sub>).</p>
+      <p class="text-xs text-[var(--muted-foreground)] mb-3">Since ACK frames are tiny (T<sub>ack</sub> &approx; 0), <strong>Total Time = T<sub>t</sub> + 2T<sub>p</sub></strong>.</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+          <p class="text-xs text-gray-400 mb-1">Normalized Delay Parameter (a):</p>
+          <p class="text-base font-mono text-purple-300 mb-2"><span class="formula-badge">a = T<sub>p</sub> / T<sub>t</sub></span></p>
+          <p class="text-xs text-gray-400">Where T<sub>p</sub> = d / v and T<sub>t</sub> = L / B</p>
+        </div>
+        <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+          <p class="text-xs text-gray-400 mb-1">Efficiency (&eta;) & Throughput:</p>
+          <p class="text-base font-mono text-emerald-300 mb-2"><span class="formula-badge">&eta; = T<sub>t</sub> / (T<sub>t</sub> + 2T<sub>p</sub>) = 1 / (1 + 2a)</span></p>
+          <p class="text-xs text-gray-400 font-mono text-blue-300">Throughput = &eta; &times; Bandwidth (B)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-xs text-[var(--muted-foreground)] bg-[#121215] p-3 rounded border border-[var(--border)]">
+      • <strong>Sequence Numbers Required:</strong> Exactly <strong>2 numbers (0 and 1)</strong> &rarr; requires <strong>1 bit</strong> for sequence number.<br>
+      • <strong>Drawback:</strong> In high-speed long-distance links (high <code>a</code>, e.g., satellite links), Stop-and-Wait efficiency drops to &lt; 1% because the transmitter sits completely idle waiting for ACKs!
+    </div>
+  </div>
+
+  <!-- 3. SLIDING WINDOW & PIPELINING CONCEPT -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">2️⃣ Pipelining & Optimal Window Sizing</h2>
+    <p class="text-sm text-gray-300 mb-3">To achieve 100% efficiency (&eta; = 1), the sender must continuously transmit frames during the entire round-trip time (T<sub>t</sub> + 2T<sub>p</sub>) without waiting for an ACK.</p>
+    <div class="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded text-center text-sm text-emerald-200 mb-4">
+      <strong>Optimal Window Size (W<sub>opt</sub>):</strong> <span class="formula-badge">W<sub>opt</sub> = 1 + 2a</span>
+    </div>
+    <p class="text-xs text-[var(--muted-foreground)]">If sender window size W &ge; 1 + 2a &rarr; <strong>Efficiency is 100%</strong> (link is completely saturated). If W &lt; 1 + 2a &rarr; <strong>Efficiency &eta; = W / (1 + 2a)</strong>.</p>
+  </div>
+
+  <!-- 4. GO-BACK-N (GBN) ARQ -->
+  <div class="content-box border-l-4 border-l-purple-500">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">3️⃣ Go-Back-N (GBN) ARQ</h2>
+    <p class="text-sm text-gray-300 mb-3">Allows sender to transmit up to <code>N</code> frames before receiving an acknowledgment. The receiver has a <strong>window of size 1 (W<sub>r</sub> = 1)</strong>.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white text-sm mb-2">Key Properties</h4>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-1.5">
+          <li>• <strong>Sender Window (W<sub>s</sub>):</strong> N (at most 2<sup>k</sup> - 1 for k-bit sequence numbers).</li>
+          <li>• <strong>Receiver Window (W<sub>r</sub>):</strong> Strictly 1 (discards out-of-order frames, no buffer!).</li>
+          <li>• <strong>Cumulative ACKs:</strong> ACK 5 acknowledges all frames up to 4.</li>
+          <li>• <strong>Single Timer:</strong> Maintained for the oldest unacknowledged frame.</li>
+        </ul>
+      </div>
+
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white text-sm mb-2">The Retransmission Rule</h4>
+        <p class="text-xs text-gray-300 mb-2">If frame <code>i</code> is damaged or lost, the receiver rejects all subsequent frames (i+1, i+2...). When the timer for frame <code>i</code> expires, the sender must <strong>retransmit frame i AND all frames sent after it ("Go Back N")</strong>!</p>
+        <p class="text-xs text-orange-300">Wastes bandwidth if error rate is high.</p>
+      </div>
+    </div>
+
+    <div class="bg-[#202024] p-3 rounded border border-[var(--border)] text-xs text-gray-300">
+      <strong>Sequence Number Constraint:</strong> <span class="formula-badge">W<sub>s</sub> + W<sub>r</sub> &le; 2<sup>k</sup></span> &rarr; Since W<sub>r</sub> = 1, <span class="formula-badge">W<sub>s</sub> &le; 2<sup>k</sup> - 1</span>.
+    </div>
+  </div>
+
+  <!-- 5. SELECTIVE REPEAT (SR) ARQ -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">4️⃣ Selective Repeat (SR) ARQ</h2>
+    <p class="text-sm text-gray-300 mb-3">Both sender and receiver maintain multi-frame windows. <strong>Only the damaged/lost frame is retransmitted.</strong></p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white text-sm mb-2">Key Properties</h4>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-1.5">
+          <li>• <strong>Sender Window (W<sub>s</sub>):</strong> 2<sup>k-1</sup>.</li>
+          <li>• <strong>Receiver Window (W<sub>r</sub>):</strong> Equal to W<sub>s</sub> (2<sup>k-1</sup>).</li>
+          <li>• <strong>Out-of-order Buffering:</strong> Receiver accepts and buffers correct out-of-order frames!</li>
+          <li>• <strong>Independent (Selective) ACKs:</strong> Each frame is acknowledged individually.</li>
+          <li>• <strong>Individual Timers:</strong> Sender runs a separate timer for every outstanding frame.</li>
+        </ul>
+      </div>
+
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white text-sm mb-2">Window Sizing Derivation</h4>
+        <p class="text-xs text-gray-300 mb-2">To prevent the receiver from confusing retransmitted old frames with brand-new frames from the next cycle:</p>
+        <p class="text-sm font-mono text-emerald-300 my-2"><span class="formula-badge">W<sub>s</sub> + W<sub>r</sub> &le; 2<sup>k</sup></span></p>
+        <p class="text-xs text-[var(--muted-foreground)]">Since W<sub>s</sub> = W<sub>r</sub>: 2W<sub>s</sub> &le; 2<sup>k</sup> &rarr; <span class="formula-badge">W<sub>s</sub> = W<sub>r</sub> &le; 2<sup>k-1</sup></span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. MASTER COMPARISON TABLE -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">5️⃣ Master Comparison Table (GATE Reference)</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs text-left border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border border-[var(--border)] text-gray-300">
+            <th class="p-2 border border-[var(--border)]">Feature</th>
+            <th class="p-2 border border-[var(--border)] text-blue-300">Stop-and-Wait</th>
+            <th class="p-2 border border-[var(--border)] text-purple-300">Go-Back-N</th>
+            <th class="p-2 border border-[var(--border)] text-emerald-300">Selective Repeat</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-300">
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-bold">Sender Window (W<sub>s</sub>)</td>
+            <td class="p-2 border border-[var(--border)] font-mono">1</td>
+            <td class="p-2 border border-[var(--border)] font-mono">N &le; 2<sup>k</sup> - 1</td>
+            <td class="p-2 border border-[var(--border)] font-mono">2<sup>k-1</sup></td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-bold">Receiver Window (W<sub>r</sub>)</td>
+            <td class="p-2 border border-[var(--border)] font-mono">1</td>
+            <td class="p-2 border border-[var(--border)] font-mono">1</td>
+            <td class="p-2 border border-[var(--border)] font-mono">W<sub>s</sub> = 2<sup>k-1</sup></td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-bold">Receiver Buffering</td>
+            <td class="p-2 border border-[var(--border)]">No</td>
+            <td class="p-2 border border-[var(--border)] text-red-400">No (discards)</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">Yes (buffers out-of-order)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-bold">Acknowledgment Type</td>
+            <td class="p-2 border border-[var(--border)]">Individual</td>
+            <td class="p-2 border border-[var(--border)] text-purple-300">Cumulative</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-300">Selective / Individual</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-bold">Retransmission on error</td>
+            <td class="p-2 border border-[var(--border)]">Single frame</td>
+            <td class="p-2 border border-[var(--border)] text-orange-400">Entire window (N frames)</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400">Only damaged frame</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] font-bold">Efficiency (&eta;)</td>
+            <td class="p-2 border border-[var(--border)] font-mono">1 / (1 + 2a)</td>
+            <td class="p-2 border border-[var(--border)] font-mono">N / (1 + 2a)</td>
+            <td class="p-2 border border-[var(--border)] font-mono">W<sub>s</sub> / (1 + 2a)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 7. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">6️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: Sequence Number bits formula</h4>
+      <p class="text-sm text-gray-300">If question asks: <em>"A Go-Back-N protocol uses a window size of 7. How many bits are required in the sequence number field?"</em>
+        <br>Formula: <code>Total sequence numbers = W<sub>s</sub> + W<sub>r</sub> = 7 + 1 = 8</code>.
+        <br>Bits = <code>&lceil; log<sub>2</sub>(8) &rceil; = 3 bits</code>.
+        <br>If it were Selective Repeat with window 7: <code>Total = 7 + 7 = 14 &rarr; &lceil; log<sub>2</sub>(14) &rceil; = 4 bits</code>!
+      </p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Half-Duplex vs Full-Duplex Efficiency</h4>
+      <p class="text-sm text-gray-300">In <strong>Half-Duplex</strong>, the channel cannot transmit and receive simultaneously, so ACK transmission time (T<sub>ack</sub>) MUST be added to total cycle time: <code>T = T<sub>t</sub> + 2T<sub>p</sub> + T<sub>ack</sub></code>. In Full-Duplex with piggybacking, T<sub>ack</sub> is effectively absorbed!</p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to CN Index
+    </a>
+  </div>
+
+</body>
+</html>

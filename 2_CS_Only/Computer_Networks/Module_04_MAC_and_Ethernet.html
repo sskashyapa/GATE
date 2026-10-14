@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 4: MAC Protocols & Ethernet</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📡</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+    .code-block { background: #0f0f13; border: 1px solid var(--border); padding: 1rem; border-radius: 0.5rem; font-family: monospace; color: #e5e7eb; overflow-x: auto; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to CN Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">📡 Module 4: Medium Access Control (MAC) & Ethernet</h1>
+    <p class="text-[var(--muted-foreground)]">ALOHA, CSMA/CD Minimum Frame Size (L &ge; 2&times;T<sub>p</sub>&times;B), Exponential Backoff & 802.3 Frame</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">📖 Core Fundamental Theory: The Multiple Access Problem</h2>
+    <p class="text-sm text-gray-300 mb-3">In point-to-point links (like an optical cable between two data centers), only one sender exists. But in broadcast media (like shared coaxial cables, Wi-Fi radio frequencies, or early hubs), <strong>multiple stations share the same physical channel</strong>.</p>
+    <p class="text-sm text-gray-300">If two or more stations transmit electrical/radio signals at the exact same time, the signals collide, distorting the waveforms into gibberish. The <strong>Medium Access Control (MAC) sublayer</strong> defines rules on <em>who</em> gets to transmit and <em>when</em>.</p>
+  </div>
+
+  <!-- 2. RANDOM ACCESS: ALOHA -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">1️⃣ ALOHA Protocols</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">Developed at University of Hawaii for radio communication across islands.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <!-- Pure ALOHA -->
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-orange-400 text-sm mb-2">Pure ALOHA (Continuous Time)</h4>
+        <p class="text-xs text-gray-300 mb-2">Stations transmit frames whenever data is ready. If a collision occurs, stations wait a random backoff time and retransmit.</p>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-1 mb-3">
+          <li>• <strong>Vulnerable Time:</strong> <span class="formula-badge">2 &times; T<sub>t</sub></span></li>
+          <li>• <strong>Throughput:</strong> S = G &middot; e<sup>-2G</sup></li>
+          <li>• <strong>Max Efficiency:</strong> <span class="text-emerald-400 font-bold">1 / (2e) &approx; 18.4%</span> (at G = 0.5)</li>
+        </ul>
+      </div>
+
+      <!-- Slotted ALOHA -->
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-400 text-sm mb-2">Slotted ALOHA (Discrete Time)</h4>
+        <p class="text-xs text-gray-300 mb-2">Time is divided into discrete slots equal to T<sub>t</sub>. A station can ONLY transmit at the beginning of a time slot.</p>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-1 mb-3">
+          <li>• <strong>Vulnerable Time:</strong> <span class="formula-badge">1 &times; T<sub>t</sub></span> (halved!)</li>
+          <li>• <strong>Throughput:</strong> S = G &middot; e<sup>-G</sup></li>
+          <li>• <strong>Max Efficiency:</strong> <span class="text-emerald-400 font-bold">1 / e &approx; 36.8%</span> (at G = 1)</li>
+        </ul>
+      </div>
+    </div>
+    <p class="text-xs text-gray-400 text-center"><em>Note: G is the average number of attempted frame transmissions per frame-time T<sub>t</sub>.</em></p>
+  </div>
+
+  <!-- 3. CSMA/CD - THE BIGGEST GATE TOPIC IN MAC -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">2️⃣ CSMA/CD (Carrier Sense Multiple Access with Collision Detection)</h2>
+    <p class="text-sm text-gray-300 mb-3">Used in classical Ethernet (IEEE 802.3). Stations <strong>sense the carrier before transmitting</strong> ("listen before talk") and <strong>continue monitoring the channel during transmission</strong> ("listen while talk").</p>
+
+    <!-- Condition for Collision Detection -->
+    <div class="bg-[#202024] p-4 rounded border border-[var(--border)] mb-4">
+      <h4 class="font-bold text-white mb-2 text-sm">The Fundamental Collision Detection Condition:</h4>
+      <p class="text-xs text-gray-300 mb-2">Suppose Station A transmits at t=0 towards Station B located distance <code>d</code> away. Just as the signal is about to reach B at time t = T<sub>p</sub> - &epsilon;, Station B senses idle and transmits. The collision occurs near B, and the collision signal takes another T<sub>p</sub> to travel back to A!</p>
+      <p class="text-xs text-purple-300 font-semibold mb-3">&rarr; In the absolute worst case, Station A learns of the collision after <strong>2 &times; T<sub>p</sub></strong> (Round Trip Time)!</p>
+      
+      <div class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded text-center">
+        <p class="text-xs text-gray-300 mb-1">To ensure A detects the collision before it finishes sending:</p>
+        <p class="text-base font-mono text-emerald-300 my-1"><span class="formula-badge">T<sub>t</sub> &ge; 2 &times; T<sub>p</sub></span></p>
+        <p class="text-sm font-mono text-blue-300 mt-2"><span class="formula-badge">L<sub>min</sub> &ge; 2 &times; T<sub>p</sub> &times; Bandwidth (B)</span></p>
+      </div>
+    </div>
+
+    <!-- Binary Exponential Backoff Algorithm -->
+    <div class="bg-[#121215] p-4 border border-[var(--border)] rounded mb-4">
+      <h4 class="font-bold text-blue-300 text-sm mb-2">Binary Exponential Backoff Algorithm:</h4>
+      <p class="text-xs text-gray-300 mb-2">When a collision occurs, how long should the station wait before retrying to prevent repeated collisions?</p>
+      <ul class="text-xs text-[var(--muted-foreground)] space-y-1.5">
+        <li>• After collision <code>n</code> (1 &le; n &le; 10), the station picks random integer <strong>K &isin; [0, 2<sup>n</sup> - 1]</strong>.</li>
+        <li>• Waiting Backoff Time = <strong>K &times; Slot Time</strong> (where Slot Time = 2 &times; T<sub>p</sub>).</li>
+        <li>• For collisions 11 to 15: K is frozen at [0, 2<sup>10</sup> - 1] = [0, 1023].</li>
+        <li>• If collision count reaches <strong>n = 16</strong>: Give up and report <strong>Network Failure</strong>!</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4. ETHERNET (IEEE 802.3) FRAME FORMAT -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">3️⃣ Classic Ethernet (802.3) Frame Layout</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">Every field size must be memorized for GATE questions:</p>
+
+    <div class="overflow-x-auto mb-4">
+      <table class="w-full text-xs text-center border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border border-[var(--border)] text-gray-300">
+            <th class="p-2 border border-[var(--border)]">Preamble</th>
+            <th class="p-2 border border-[var(--border)]">SFD</th>
+            <th class="p-2 border border-[var(--border)]">Dest MAC</th>
+            <th class="p-2 border border-[var(--border)]">Source MAC</th>
+            <th class="p-2 border border-[var(--border)]">Length/Type</th>
+            <th class="p-2 border border-[var(--border)] text-blue-300">Payload (Data)</th>
+            <th class="p-2 border border-[var(--border)]">CRC (FCS)</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-300 font-mono">
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)]">7 Bytes</td>
+            <td class="p-2 border border-[var(--border)]">1 Byte</td>
+            <td class="p-2 border border-[var(--border)]">6 Bytes</td>
+            <td class="p-2 border border-[var(--border)]">6 Bytes</td>
+            <td class="p-2 border border-[var(--border)]">2 Bytes</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400 font-bold">46 to 1500 Bytes</td>
+            <td class="p-2 border border-[var(--border)]">4 Bytes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-emerald-400">Minimum Frame Size:</strong> 6 + 6 + 2 + 46 + 4 = <strong>64 Bytes</strong>.<br>
+        <em>Why 46 bytes min payload?</em> 64 Bytes was chosen specifically so that at 10 Mbps over 2.5 km coaxial cable, T<sub>t</sub> &ge; 2T<sub>p</sub> holds true!
+      </div>
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-blue-400">Maximum Frame Size:</strong> 6 + 6 + 2 + 1500 + 4 = <strong>1518 Bytes</strong>.<br>
+        (Preamble and SFD are physical layer synchronization bytes and are not counted towards the 64-1518 byte Ethernet frame limit).
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. CSMA/CA & WIRELESS (WIFI) -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ CSMA/CA (Collision Avoidance - Wi-Fi 802.11)</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-3">Why not CSMA/CD in Wi-Fi? Because in wireless, a transmitter drowns out all incoming signals, making it impossible to detect collisions while transmitting, plus the <strong>Hidden Terminal Problem</strong> exists.</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-purple-300">RTS / CTS Handshake:</strong>
+        <p class="mt-1 text-[var(--muted-foreground)]">Sender broadcasts a short <code>Request To Send (RTS)</code> frame. The Access Point replies with <code>Clear To Send (CTS)</code>. All neighboring nodes overhear the CTS and silence themselves.</p>
+      </div>
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <strong class="text-purple-300">Inter-Frame Spacing (IFS):</strong>
+        <p class="mt-1 text-[var(--muted-foreground)]">Priority determined by idle wait duration:<br>
+        <strong>SIFS (Shortest IFS):</strong> Highest priority, used for CTS/ACK.<br>
+        <strong>DIFS (Distributed IFS):</strong> Longest IFS, used for regular data frames.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">5️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: Upgrading Speed Changes Minimum Frame Size</h4>
+      <p class="text-sm text-gray-300">Formula: <code>L<sub>min</sub> = 2 &times; (d / v) &times; B</code>.
+        <br>If a network upgrades its bandwidth <code>B</code> from 10 Mbps to 100 Mbps (10&times; increase) without changing the frame size, <strong>maximum network distance d must be decreased by 10&times;</strong> (from 2500m to 250m) for collision detection to still work!
+      </p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Collision Probability in Exponential Backoff</h4>
+      <p class="text-sm text-gray-300">If two stations collide for the first time (n=1), both pick K &isin; {0, 1}. The probability of a second consecutive collision is <code>P(both pick 0) + P(both pick 1) = (1/2 &times; 1/2) + (1/2 &times; 1/2) = 2/4 = 0.5 (50%)</code>!</p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to CN Index
+    </a>
+  </div>
+
+</body>
+</html>

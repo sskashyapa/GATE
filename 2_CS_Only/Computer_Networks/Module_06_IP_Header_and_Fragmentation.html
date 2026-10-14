@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 6: IP Header, Fragmentation, ARP & ICMP</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to CN Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">📦 Module 6: IP Header, Fragmentation, ARP & ICMP</h1>
+    <p class="text-[var(--muted-foreground)]">IPv4 Header Fields, Fragmentation Math (Offset in 8-byte units), MTU, IPv6 & Core Protocols</p>
+  </div>
+
+  <!-- 1. IPV4 HEADER ARCHITECTURE -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">1️⃣ The IPv4 Datagram Header (20 to 60 Bytes)</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">Every field size and scaling factor is tested in GATE:</p>
+
+    <div class="overflow-x-auto mb-4">
+      <table class="w-full text-xs text-center border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border border-[var(--border)] text-gray-300">
+            <th class="p-2 border border-[var(--border)]">Bit 0 - 3</th>
+            <th class="p-2 border border-[var(--border)]">Bit 4 - 7</th>
+            <th class="p-2 border border-[var(--border)]">Bit 8 - 15</th>
+            <th class="p-2 border border-[var(--border)]">Bit 16 - 31</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-300 font-mono">
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] text-blue-400">VER (4 bits)</td>
+            <td class="p-2 border border-[var(--border)] text-emerald-400 font-bold">HLEN / IHL (4 bits)</td>
+            <td class="p-2 border border-[var(--border)]">Type of Service (8 bits)</td>
+            <td class="p-2 border border-[var(--border)] text-purple-400 font-bold">Total Length (16 bits)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)]" colspan="2">Identification (16 bits)</td>
+            <td class="p-2 border border-[var(--border)] text-orange-400 font-bold">Flags (3 bits)</td>
+            <td class="p-2 border border-[var(--border)] text-red-400 font-bold">Fragment Offset (13 bits)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] text-yellow-300 font-bold">TTL (8 bits)</td>
+            <td class="p-2 border border-[var(--border)] text-blue-300">Protocol (8 bits)</td>
+            <td class="p-2 border border-[var(--border)]" colspan="2">Header Checksum (16 bits)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)]" colspan="4">Source IP Address (32 bits)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)]" colspan="4">Destination IP Address (32 bits)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Field Descriptions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-[var(--muted-foreground)]">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1.5">
+        <p>• <strong class="text-emerald-400">HLEN (Header Length):</strong> Measured in <strong>4-byte words</strong>! Min value = 5 (5 &times; 4 = 20 Bytes), Max value = 15 (15 &times; 4 = 60 Bytes).</p>
+        <p>• <strong class="text-purple-400">Total Length:</strong> Total datagram length (Header + Data) in Bytes. Max = 2<sup>16</sup> - 1 = 65,535 Bytes. Payload = Total Length - (HLEN &times; 4).</p>
+        <p>• <strong class="text-yellow-400">TTL (Time to Live):</strong> Decremented by 1 at every router hop. Prevents infinite looping. If TTL hits 0, router drops packet and sends ICMP Time Exceeded.</p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1.5">
+        <p>• <strong class="text-orange-400">Flags (3 bits):</strong> 
+          <br>&nbsp;&nbsp;- Bit 0: Reserved (0).
+          <br>&nbsp;&nbsp;- Bit 1 (DF - Don't Fragment): 1 = Do not fragment.
+          <br>&nbsp;&nbsp;- Bit 2 (MF - More Fragments): 1 = More fragments follow; 0 = Last fragment.
+        </p>
+        <p>• <strong class="text-blue-300">Protocol Numbers:</strong> 1 = ICMP, 6 = TCP, 17 = UDP, 89 = OSPF.</p>
+        <p>• <strong class="text-gray-300">Header Checksum:</strong> Protects only the header. Must be recomputed at every router because TTL changes!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. FRAGMENTATION MATH (HEAVY GATE NUMERICAL) -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">2️⃣ IP Fragmentation Math</h2>
+    <p class="text-sm text-gray-300 mb-3">Every link layer technology has a <strong>Maximum Transmission Unit (MTU)</strong> (e.g., Ethernet MTU = 1500 bytes). If an incoming IP packet is larger than the outgoing link's MTU, the router must slice it into smaller fragments.</p>
+
+    <div class="bg-[#202024] p-4 rounded border border-[var(--border)] mb-4">
+      <h4 class="font-bold text-white mb-2 text-sm">The 2 Golden Rules of Fragmentation:</h4>
+      <ol class="text-xs text-gray-300 space-y-2 list-decimal list-inside">
+        <li><strong>Payload Size must be a multiple of 8:</strong> Because Fragment Offset is 13 bits and represents 16-bit byte counts, it uses a <strong>scaling factor of 8</strong>. Every fragment's data payload (except possibly the very last one) must be divisible by 8!
+          <br><span class="formula-badge">Max Data per Fragment = &lfloor; (MTU - 20) / 8 &rfloor; &times; 8</span>
+        </li>
+        <li><strong>Offset Formula:</strong> <span class="formula-badge">Fragment Offset = (Data Bytes sent before this fragment) / 8</span></li>
+      </ol>
+    </div>
+
+    <!-- Step by Step Numerical -->
+    <h4 class="font-bold text-blue-300 text-sm mb-2">Master Numerical:</h4>
+    <div class="bg-[#121215] p-4 border border-[var(--border)] rounded text-xs text-gray-300 space-y-2 font-mono">
+      <p class="text-white">A datagram of 4000 Bytes (20B Header + 3980B Data) arrives at a router with outgoing MTU = 1500 Bytes.</p>
+      <p>• Max data per fragment = &lfloor; (1500 - 20) / 8 &rfloor; &times; 8 = &lfloor; 1480 / 8 &rfloor; &times; 8 = <strong>1480 Bytes</strong>.</p>
+      
+      <div class="overflow-x-auto mt-2">
+        <table class="w-full text-center border-collapse text-xs">
+          <thead>
+            <tr class="bg-[#202024] text-gray-300">
+              <th class="p-2 border border-[var(--border)]">Fragment</th>
+              <th class="p-2 border border-[var(--border)]">Data Range</th>
+              <th class="p-2 border border-[var(--border)]">Total Length</th>
+              <th class="p-2 border border-[var(--border)]">Offset</th>
+              <th class="p-2 border border-[var(--border)]">MF Flag</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="p-2 border border-[var(--border)] text-blue-400">Frag 1</td>
+              <td class="p-2 border border-[var(--border)]">Byte 0 - 1479</td>
+              <td class="p-2 border border-[var(--border)]">1500 (20+1480)</td>
+              <td class="p-2 border border-[var(--border)] text-emerald-400">0 / 8 = 0</td>
+              <td class="p-2 border border-[var(--border)]">1</td>
+            </tr>
+            <tr>
+              <td class="p-2 border border-[var(--border)] text-blue-400">Frag 2</td>
+              <td class="p-2 border border-[var(--border)]">Byte 1480 - 2959</td>
+              <td class="p-2 border border-[var(--border)]">1500 (20+1480)</td>
+              <td class="p-2 border border-[var(--border)] text-emerald-400">1480 / 8 = 185</td>
+              <td class="p-2 border border-[var(--border)]">1</td>
+            </tr>
+            <tr>
+              <td class="p-2 border border-[var(--border)] text-blue-400">Frag 3</td>
+              <td class="p-2 border border-[var(--border)]">Byte 2960 - 3979 (1020B)</td>
+              <td class="p-2 border border-[var(--border)]">1040 (20+1020)</td>
+              <td class="p-2 border border-[var(--border)] text-emerald-400">2960 / 8 = 370</td>
+              <td class="p-2 border border-[var(--border)] text-red-400">0 (Last)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. ARP, ICMP & NAT -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">3️⃣ ARP, ICMP &amp; NAT</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-[var(--muted-foreground)]">
+      <!-- ARP -->
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-blue-300 text-sm mb-1">ARP (Address Resolution)</h4>
+        <p class="text-gray-300 mb-2">Maps a known 32-bit IP address &rarr; 48-bit MAC address.</p>
+        <p>• <strong>ARP Request:</strong> Broadcasted to entire LAN (MAC <code>FF:FF:FF:FF:FF:FF</code>).<br>• <strong>ARP Reply:</strong> Unicast directly back to requester.</p>
+      </div>
+
+      <!-- ICMP -->
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-purple-300 text-sm mb-1">ICMP (Network Diagnostics)</h4>
+        <p class="text-gray-300 mb-2">Reports errors and operational information directly over IP (Protocol 1).</p>
+        <p>• <strong>ping:</strong> Uses Echo Request (Type 8) &amp; Echo Reply (Type 0).<br>• <strong>traceroute:</strong> Intentionally sends packets with TTL = 1, 2, 3... to elicit ICMP Time Exceeded (Type 11).</p>
+      </div>
+
+      <!-- NAT -->
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-300 text-sm mb-1">NAT / PAT</h4>
+        <p class="text-gray-300 mb-2">Translates private IP addresses to a single public IP.</p>
+        <p>• Uses a NAT translation table mapping: <code>(Private IP, Port) &harr; (Public IP, Port)</code> so thousands of devices can share 1 public IP!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: Reassembly is NEVER done by Intermediate Routers!</h4>
+      <p class="text-sm text-gray-300">If a packet is fragmented at Router 1, Router 2 will NEVER assemble the fragments back together. Intermediate routers only fragment; <strong>Reassembly is strictly performed at the final Destination Host</strong> (because fragments can take different routes and arrive out-of-order!).</p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Scaling Factors: HLEN vs Offset</h4>
+      <p class="text-sm text-gray-300">Remember:
+        <br>• <strong>HLEN scaling factor = 4</strong> (multiply HLEN by 4 to get Header Bytes).
+        <br>• <strong>Fragment Offset scaling factor = 8</strong> (multiply Offset by 8 to get starting Data Byte position).
+      </p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to CN Index
+    </a>
+  </div>
+
+</body>
+</html>

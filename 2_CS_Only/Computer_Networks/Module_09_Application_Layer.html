@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 9: Application Layer Protocols</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📬</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to CN Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">📬 Module 9: Application Layer Protocols</h1>
+    <p class="text-[var(--muted-foreground)]">DNS Hierarchy & Queries, HTTP 1.0 vs 1.1 RTT Math, SMTP, POP3, IMAP & FTP</p>
+  </div>
+
+  <!-- 1. DOMAIN NAME SYSTEM (DNS) -->
+  <div class="content-box border-l-4 border-l-blue-500">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">1️⃣ Domain Name System (DNS)</h2>
+    <p class="text-sm text-gray-300 mb-3">Translates human-readable domain names (<code>gate.iitk.ac.in</code>) into 32-bit IP addresses. Operates on <strong>Port 53</strong> (Uses <strong>UDP</strong> for standard lookups, and <strong>TCP</strong> for Zone Transfers between DNS servers).</p>
+
+    <!-- Hierarchy -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-xs">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1.5">
+        <h4 class="font-bold text-white text-sm mb-1">DNS Server Hierarchy:</h4>
+        <p>• <strong>Root DNS Servers (.):</strong> 13 logical root server addresses worldwide.</p>
+        <p>• <strong>Top-Level Domain (TLD) Servers:</strong> Responsible for <code>.com</code>, <code>.edu</code>, <code>.org</code>, <code>.in</code>.</p>
+        <p>• <strong>Authoritative DNS Servers:</strong> An organization's official server storing its actual IP records.</p>
+        <p>• <strong>Local DNS Server (Resolver):</strong> Managed by your ISP or campus; caches records.</p>
+      </div>
+
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded space-y-1.5">
+        <h4 class="font-bold text-white text-sm mb-1">Common Resource Records (RR):</h4>
+        <p>• <strong>A:</strong> Maps Hostname &rarr; 32-bit IPv4 address.</p>
+        <p>• <strong>AAAA:</strong> Maps Hostname &rarr; 128-bit IPv6 address.</p>
+        <p>• <strong>CNAME:</strong> Canonical Name (aliases: e.g. <code>ftp.site.com</code> &rarr; <code>server1.site.com</code>).</p>
+        <p>• <strong>MX:</strong> Mail Exchanger (specifies mail server for the domain).</p>
+        <p>• <strong>NS:</strong> Authoritative Name Server for the zone.</p>
+      </div>
+    </div>
+
+    <!-- Recursive vs Iterative -->
+    <div class="p-3 bg-[#202024] rounded border border-[var(--border)] text-xs text-gray-300">
+      <strong class="text-emerald-400">Recursive Query:</strong> The client asks the Local DNS server, and the Local DNS server performs all queries downstream on behalf of the client, returning the final answer.
+      <br><strong class="text-purple-400 mt-1 inline-block">Iterative Query:</strong> The queried server replies with: <em>"I don't know the IP, but here is the IP of the next DNS server to ask!"</em>
+    </div>
+  </div>
+
+  <!-- 2. HTTP (HYPERTEXT TRANSFER PROTOCOL) & RTT MATH -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">2️⃣ HTTP &amp; Web Response Time Math</h2>
+    <p class="text-sm text-gray-300 mb-3">Runs over <strong>TCP Port 80</strong> (HTTP) or <strong>Port 443</strong> (HTTPS with TLS encryption). HTTP is inherently <strong>stateless</strong> (maintains state using Cookies).</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-orange-400 text-sm mb-1">Non-Persistent HTTP (HTTP/1.0)</h4>
+        <p class="text-xs text-gray-300 mb-2">Opens a <strong>brand new TCP connection for every single referenced object</strong> (images, CSS, JS) on a page.</p>
+        <div class="p-2 bg-[#18181b] rounded border border-[var(--border)] text-xs font-mono text-purple-300 mb-2">
+          Time per object = 2 &times; RTT + T<sub>trans</sub>
+        </div>
+        <p class="text-xs text-[var(--muted-foreground)]">(1 RTT for TCP 3-way handshake + 1 RTT for HTTP Request/Data).</p>
+      </div>
+
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-400 text-sm mb-1">Persistent HTTP (HTTP/1.1)</h4>
+        <p class="text-xs text-gray-300 mb-2">Keeps the TCP connection open to fetch multiple objects across the same session.</p>
+        <ul class="text-xs text-[var(--muted-foreground)] space-y-1">
+          <li>• <strong>Without Pipelining:</strong> 1 RTT per referenced object.</li>
+          <li>• <strong>With Pipelining:</strong> Client sends requests for ALL objects back-to-back in <strong>1 single RTT</strong>!</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Master RTT Comparison -->
+    <div class="bg-[#202024] p-3 rounded border border-[var(--border)] text-xs text-gray-300">
+      <strong class="text-white">GATE Numerical Formula:</strong> For a base HTML file containing <code>K</code> referenced images:
+      <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--muted-foreground)]">
+        <li>Non-Persistent (HTTP/1.0): Total RTTs = <code>2 + 2K = 2(K + 1) RTTs</code>.</li>
+        <li>Persistent without pipelining: Total RTTs = <code>2 + K RTTs</code> (1 RTT for handshake + 1 RTT for base HTML + K RTTs).</li>
+        <li>Persistent with pipelining: Total RTTs = <code>2 + 1 = 3 RTTs</code> total!</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3. EMAIL PROTOCOLS: SMTP, POP3, IMAP -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">3️⃣ Electronic Mail Architecture</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">Email delivery involves distinct <strong>Push</strong> and <strong>Pull</strong> protocols:</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-300">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-blue-300 text-sm mb-1">SMTP (Port 25)</h4>
+        <span class="formula-badge">Push Protocol</span>
+        <p class="mt-2 text-[var(--muted-foreground)]">Transfers mail from Sender &rarr; Sender's Mail Server &rarr; Recipient's Mail Server over TCP. Uses 7-bit ASCII (extended by <strong>MIME</strong> for multimedia attachments).</p>
+      </div>
+
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-purple-300 text-sm mb-1">POP3 (Port 110)</h4>
+        <span class="formula-badge">Pull Protocol</span>
+        <p class="mt-2 text-[var(--muted-foreground)]">Downloads messages from Mail Server to user's client machine. Simple, but does NOT synchronize changes or folders back to server.</p>
+      </div>
+
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-300 text-sm mb-1">IMAP (Port 143)</h4>
+        <span class="formula-badge">Pull Protocol</span>
+        <p class="mt-2 text-[var(--muted-foreground)]">Modern sync protocol: maintains folder hierarchy directly on the server so emails stay in sync across phone, laptop, and webmail.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. FILE TRANSFER PROTOCOL (FTP) -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ FTP (File Transfer Protocol)</h2>
+    <p class="text-sm text-gray-300 mb-3">FTP uses <strong>Two Separate Parallel TCP Connections (Out-of-band control)</strong>:</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300">
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-yellow-300 text-sm mb-1">Control Connection (Port 21)</h4>
+        <p class="text-[var(--muted-foreground)]">Used for user authentication and directory navigation commands (<code>USER</code>, <code>PASS</code>, <code>LIST</code>). <strong>Remains open throughout the entire session (Persistent).</strong></p>
+      </div>
+      <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-300 text-sm mb-1">Data Connection (Port 20)</h4>
+        <p class="text-[var(--muted-foreground)]">Created dynamically only when a file transfer (<code>RETR</code>, <code>STOR</code>) is initiated. <strong>Closed immediately after file finishes (Non-Persistent).</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">5️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: SMTP vs POP3/IMAP Roles</h4>
+      <p class="text-sm text-gray-300">SMTP cannot pull mail! When you check your inbox, your client uses <strong>POP3 or IMAP</strong>. SMTP is used ONLY when pushing an email from client to server or between two servers.</p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: DNS Uses BOTH UDP and TCP</h4>
+      <p class="text-sm text-gray-300">Most people say DNS uses UDP. In GATE: <strong>DNS uses UDP (port 53)</strong> for queries because of speed (no connection setup), but uses <strong>TCP (port 53)</strong> for <em>Zone Transfers</em> between Primary and Secondary DNS servers because zone data must be 100% reliable!</p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to CN Index
+    </a>
+  </div>
+
+</body>
+</html>

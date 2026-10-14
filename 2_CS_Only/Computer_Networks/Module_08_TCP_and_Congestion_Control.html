@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 8: TCP & Congestion Control</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to CN Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🚀 Module 8: Transport Layer & TCP Congestion Control</h1>
+    <p class="text-[var(--muted-foreground)]">TCP Header Flags, 3-Way Handshake, Slow Start, Congestion Avoidance & RTT Traces</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">📖 Core Fundamental Theory: Process-to-Process Delivery</h2>
+    <p class="text-sm text-gray-300 mb-3">The Network Layer (IP) delivers packets from host to host. But once a packet reaches your laptop, which application should receive it: Chrome, Spotify, or Zoom? <strong>The Transport Layer provides Process-to-Process communication using Port Numbers (16-bit: 0 to 65,535).</strong></p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+      <div class="bg-[#121215] p-3 border border-[var(--border)] rounded text-xs text-[var(--muted-foreground)]">
+        <h4 class="font-bold text-white mb-1">Socket Address</h4>
+        <p>A Socket is the software interface between an application and the network: <code>Socket = IP Address + Port Number</code> (e.g. <code>192.168.1.15:8080</code>).</p>
+      </div>
+      <div class="bg-[#121215] p-3 border border-[var(--border)] rounded text-xs text-[var(--muted-foreground)]">
+        <h4 class="font-bold text-white mb-1">UDP (User Datagram Protocol)</h4>
+        <p>Connectionless, lightweight, unreliable. <strong>8-Byte fixed header</strong> (Source Port, Dest Port, Length, Checksum). Used for real-time traffic (DNS, VoIP, Gaming).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. TCP HEADER LAYOUT & FLAGS -->
+  <div class="content-box border-l-4 border-l-purple-500">
+    <h2 class="text-xl font-bold text-purple-400 mb-3">1️⃣ The TCP Header (20 to 60 Bytes)</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-3">TCP is connection-oriented, reliable, full-duplex, and byte-stream oriented.</p>
+
+    <div class="overflow-x-auto mb-4">
+      <table class="w-full text-xs text-center border-collapse">
+        <thead>
+          <tr class="bg-[#202024] border border-[var(--border)] text-gray-300">
+            <th class="p-2 border border-[var(--border)]">Bit 0 - 15</th>
+            <th class="p-2 border border-[var(--border)]">Bit 16 - 31</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-300 font-mono">
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)]">Source Port (16 bits)</td>
+            <td class="p-2 border border-[var(--border)]">Destination Port (16 bits)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] text-blue-400 font-bold" colspan="2">Sequence Number (32 bits) - Byte number of first data byte</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] text-emerald-400 font-bold" colspan="2">Acknowledgment Number (32 bits) - Next expected byte number</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)]">HLEN / Data Offset (4 bits) [x4 Bytes] &nbsp;|&nbsp; Reserved (6 bits)</td>
+            <td class="p-2 border border-[var(--border)] text-purple-300 font-bold">6 Control Flags (URG, ACK, PSH, RST, SYN, FIN)</td>
+          </tr>
+          <tr class="border border-[var(--border)]">
+            <td class="p-2 border border-[var(--border)] text-yellow-300 font-bold">Window Size (16 bits) - Advertised Receiver Window (rwnd)</td>
+            <td class="p-2 border border-[var(--border)]">Checksum (16 bits) &nbsp;|&nbsp; Urgent Pointer (16 bits)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- The 6 Flags -->
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-2 text-center text-xs font-mono">
+      <div class="p-2 bg-[#121215] border border-[var(--border)] rounded"><strong class="text-white">SYN</strong><br><span class="text-gray-400">Establish Conn</span></div>
+      <div class="p-2 bg-[#121215] border border-[var(--border)] rounded"><strong class="text-white">ACK</strong><br><span class="text-gray-400">Ack valid</span></div>
+      <div class="p-2 bg-[#121215] border border-[var(--border)] rounded"><strong class="text-white">FIN</strong><br><span class="text-gray-400">Close Conn</span></div>
+      <div class="p-2 bg-[#121215] border border-[var(--border)] rounded"><strong class="text-white">RST</strong><br><span class="text-gray-400">Reset Conn</span></div>
+      <div class="p-2 bg-[#121215] border border-[var(--border)] rounded"><strong class="text-white">PSH</strong><br><span class="text-gray-400">Push data</span></div>
+      <div class="p-2 bg-[#121215] border border-[var(--border)] rounded"><strong class="text-white">URG</strong><br><span class="text-gray-400">Urgent data</span></div>
+    </div>
+  </div>
+
+  <!-- 3. TCP 3-WAY HANDSHAKE -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">2️⃣ TCP Connection Management (3-Way Handshake)</h2>
+    
+    <div class="bg-[#121215] p-4 border border-[var(--border)] rounded text-xs font-mono text-gray-300 space-y-2 mb-4">
+      <div class="flex justify-between items-center border-b border-[var(--border)] pb-2 text-blue-300">
+        <span>Step 1: Client &rarr; Server</span>
+        <span>SYN = 1, ACK = 0, SEQ = x &nbsp; (Consumes 1 Seq No!)</span>
+      </div>
+      <div class="flex justify-between items-center border-b border-[var(--border)] pb-2 text-emerald-300">
+        <span>Step 2: Server &rarr; Client</span>
+        <span>SYN = 1, ACK = 1, SEQ = y, ACK_NUM = x + 1 &nbsp; (Consumes 1 Seq No!)</span>
+      </div>
+      <div class="flex justify-between items-center text-purple-300">
+        <span>Step 3: Client &rarr; Server</span>
+        <span>SYN = 0, ACK = 1, SEQ = x + 1, ACK_NUM = y + 1</span>
+      </div>
+    </div>
+    <p class="text-xs text-[var(--muted-foreground)]"><strong>TIME_WAIT State:</strong> After sending the final ACK during connection teardown (FIN handshake), the client waits for <code>2 &times; MSL (Maximum Segment Lifetime &approx; 2 minutes)</code> before completely releasing the port to ensure the final ACK reached the server.</p>
+  </div>
+
+  <!-- 4. TCP CONGESTION CONTROL - THE HEAVY GATE TOPIC -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">3️⃣ TCP Congestion Control (The Golden Numerical Topic)</h2>
+    <p class="text-sm text-gray-300 mb-3">TCP dynamically regulates how many bytes it sends into the network using the <strong>Congestion Window (cwnd)</strong>. The actual sending window is: <span class="formula-badge">W = min(cwnd, rwnd)</span>.</p>
+
+    <div class="bg-[#202024] p-4 rounded border border-[var(--border)] mb-4">
+      <h4 class="font-bold text-white mb-2 text-sm">The 3 Operational Phases:</h4>
+      
+      <div class="space-y-3 text-xs text-gray-300">
+        <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+          <strong class="text-blue-400 text-sm">1. Slow Start Phase (Exponential Growth)</strong>
+          <p class="mt-1 text-[var(--muted-foreground)]">Starts at <code>cwnd = 1 MSS (Maximum Segment Size)</code>. For every successful ACK received, cwnd increases by 1 MSS &rarr; <strong>cwnd doubles every RTT (1, 2, 4, 8, 16...)</strong> until it reaches the threshold: <span class="formula-badge">ssthresh (Slow Start Threshold)</span>.</p>
+        </div>
+
+        <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+          <strong class="text-emerald-400 text-sm">2. Congestion Avoidance Phase (Linear Growth / Additive Increase)</strong>
+          <p class="mt-1 text-[var(--muted-foreground)]">Once <code>cwnd &ge; ssthresh</code>, cwnd increases by only <strong>1 MSS per RTT</strong> (e.g. 16 &rarr; 17 &rarr; 18 &rarr; 19 MSS) to probe for bandwidth safely.</p>
+        </div>
+
+        <div class="p-3 bg-[#121215] border border-[var(--border)] rounded">
+          <strong class="text-red-400 text-sm">3. Congestion Detection (Multiplicative Decrease)</strong>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+            <div class="p-2 bg-[#18181b] border border-red-500/30 rounded">
+              <strong class="text-red-300">Case A: Time Out (Severe Congestion)</strong>
+              <p class="text-[11px] text-gray-400 mt-1">• <code>ssthresh = &lfloor; cwnd / 2 &rfloor;</code><br>• <strong>cwnd resets to 1 MSS!</strong><br>• Re-enters Slow Start.</p>
+            </div>
+            <div class="p-2 bg-[#18181b] border border-orange-500/30 rounded">
+              <strong class="text-orange-300">Case B: 3 Duplicate ACKs (Mild Congestion)</strong>
+              <p class="text-[11px] text-gray-400 mt-1">• <code>ssthresh = &lfloor; cwnd / 2 &rfloor;</code><br>• <strong>cwnd = ssthresh (TCP Reno)</strong><br>• Directly resumes in Congestion Avoidance!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Numerical Trace -->
+    <h4 class="font-bold text-white text-sm mb-2">Worked GATE Numerical Trace:</h4>
+    <div class="bg-[#121215] p-3 border border-[var(--border)] rounded text-xs font-mono text-gray-300">
+      <p class="text-gray-400 mb-1">Start: cwnd = 1 MSS, ssthresh = 16 MSS. A Timeout occurs in Round 18 (when cwnd = 20 MSS).</p>
+      <p class="text-blue-300">Rounds 1 - 5 (Slow Start): cwnd = 1 &rarr; 2 &rarr; 4 &rarr; 8 &rarr; 16 MSS (hits threshold!)</p>
+      <p class="text-emerald-300">Rounds 6 - 9 (Congestion Avoidance): cwnd = 17 &rarr; 18 &rarr; 19 &rarr; 20 MSS</p>
+      <p class="text-red-400">Timeout at cwnd = 20: New ssthresh = 20 / 2 = <strong>10 MSS</strong>, New cwnd = <strong>1 MSS</strong>!</p>
+    </div>
+  </div>
+
+  <!-- 5. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">4️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: SYN &amp; FIN consume Sequence Numbers, but ACK does NOT!</h4>
+      <p class="text-sm text-gray-300">A segment with <code>SYN=1</code> or <code>FIN=1</code> consumes exactly <strong>1 sequence number</strong> even if it carries 0 bytes of user data. A pure acknowledgment segment (SYN=0, FIN=0, Data=0) consumes 0 sequence numbers!</p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Sequence Number Wraparound Time</h4>
+      <p class="text-sm text-gray-300">Since TCP sequence number is 32 bits, there are 2<sup>32</sup> possible bytes.
+        <br>Formula for Wraparound Time: <span class="formula-badge">T<sub>wrap</sub> = 2<sup>32</sup> Bytes / Bandwidth (in Bytes/sec)</span>.
+        <br>On a 1 Gbps (125 MB/s) link, sequence numbers wrap around in just: <code>2<sup>32</sup> / (125 &times; 10<sup>6</sup>) &approx; 34.3 seconds</code>!
+      </p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to CN Index
+    </a>
+  </div>
+
+</body>
+</html>

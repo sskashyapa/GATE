@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 2: Framing & Error Detection</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root { --background: #09090b; --foreground: #fafafa; --card: #18181b; --border: #27272a; --muted-foreground: #a1a1aa; }
+    body { background-color: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; }
+    .content-box { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .theory-box { border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1.5rem; }
+    .gate-trap { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+    .formula-badge { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+    .code-block { background: #0f0f13; border: 1px solid var(--border); padding: 1rem; border-radius: 0.5rem; font-family: monospace; color: #e5e7eb; overflow-x: auto; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <a href="index.html" class="inline-flex items-center text-sm font-medium text-[var(--muted-foreground)] hover:text-white transition-colors bg-[#18181b] border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[#3f3f46]">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to CN Index
+    </a>
+  </div>
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold mb-2">🛡️ Module 2: Framing & Error Detection</h1>
+    <p class="text-[var(--muted-foreground)]">Bit/Byte Stuffing, Checksums, CRC Polynomial Math & Hamming Code</p>
+  </div>
+
+  <!-- 1. CORE FUNDAMENTAL THEORY: FRAMING -->
+  <div class="theory-box">
+    <h2 class="text-xl font-bold text-blue-400 mb-3">📖 Core Fundamental Theory: Why Framing?</h2>
+    <p class="text-sm text-gray-300 mb-3">The Physical layer delivers an endless, uninterrupted stream of raw bits. The Data Link Layer must break this raw bit stream into discrete, manageable chunks called <strong>Frames</strong> so that receivers can recognize where one message begins and another ends.</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <!-- Byte Stuffing -->
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white mb-2 text-sm">1. Byte Stuffing (Character-Oriented)</h4>
+        <p class="text-xs text-[var(--muted-foreground)] mb-2">Frames begin and end with a special <code>FLAG</code> byte. If the payload data itself contains the <code>FLAG</code> byte pattern, the sender inserts an Escape byte (<code>ESC</code>) right before it.</p>
+        <div class="code-block text-xs text-emerald-300">
+Original Data:  A FLAG B ESC C
+Stuffed Data:   FLAG A ESC FLAG B ESC ESC C FLAG
+        </div>
+        <p class="text-xs text-gray-400 mt-2">Receiver removes the <code>ESC</code> byte to recover the original payload.</p>
+      </div>
+
+      <!-- Bit Stuffing -->
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-white mb-2 text-sm">2. Bit Stuffing (Bit-Oriented, e.g., HDLC)</h4>
+        <p class="text-xs text-[var(--muted-foreground)] mb-2">Delimited by the universal flag pattern: <span class="formula-badge">01111110</span> (0, followed by six 1s, followed by 0).</p>
+        <p class="text-xs text-gray-300 mb-2"><strong>Rule:</strong> Whenever the sender detects <strong>five consecutive 1s</strong> in the data stream, it automatically injects a dummy <strong>0</strong> bit.</p>
+        <div class="code-block text-xs text-blue-300">
+Data:     01111110 (contains six 1s)
+Stuffed:  011111<strong>0</strong>10 (0 inserted after five 1s)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ERROR DETECTION CONCEPTS & HAMMING DISTANCE -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">2️⃣ Error Detection Theory & Hamming Distance</h2>
+    <p class="text-sm text-[var(--muted-foreground)] mb-4">Transmission media are imperfect; noise and electrical interference can flip bits (0 to 1 or 1 to 0). To detect errors, we append redundant check bits to the data.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-400 text-sm mb-2">Hamming Distance (d)</h4>
+        <p class="text-xs text-gray-300 mb-2">The number of bit positions in which two codewords differ (calculated by XORing the two codewords and counting the number of 1s).</p>
+        <p class="text-xs text-[var(--muted-foreground)]">Example: <code>10101</code> XOR <code>11100</code> = <code>01001</code> (Hamming distance = 2).</p>
+      </div>
+
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-blue-400 text-sm mb-2">The Minimum Hamming Distance (d<sub>min</sub>) Rules</h4>
+        <ul class="text-xs text-gray-300 space-y-2">
+          <li>• To <strong>detect up to e-bit errors</strong>: <span class="formula-badge">d<sub>min</sub> &ge; e + 1</span></li>
+          <li>• To <strong>correct up to t-bit errors</strong>: <span class="formula-badge">d<sub>min</sub> &ge; 2t + 1</span></li>
+        </ul>
+        <p class="text-xs text-gray-400 mt-2"><em>Why?</em> To correct errors, non-overlapping spheres of radius <code>t</code> around valid codewords must not intersect, requiring 2t + 1 distance!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. PARITY & 2D PARITY -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">3️⃣ Parity Checks: 1D vs 2D</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-orange-400 text-sm mb-1">Simple Parity (1D)</h4>
+        <p class="text-xs text-gray-300 mb-2">Appends 1 extra bit to ensure the total number of 1s is even (Even Parity) or odd (Odd Parity).</p>
+        <p class="text-xs text-[var(--muted-foreground)]">• Catches all <strong>odd number of bit errors</strong> (1, 3, 5 bit flips).<br>• Completely fails if an even number of bits flip (2, 4 bit errors cancel out).</p>
+      </div>
+
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-purple-400 text-sm mb-1">Two-Dimensional (2D) Parity</h4>
+        <p class="text-xs text-gray-300 mb-2">Arranges data in a matrix; computes parity for every row AND every column.</p>
+        <p class="text-xs text-[var(--muted-foreground)]">• Detects ALL 1-bit, 2-bit, and 3-bit errors.<br>• Detects most 4-bit errors (fails only if 4 error bits form a perfect rectangle in the matrix!).<br>• Can <strong>correct</strong> single-bit errors (intersection of bad row & bad column).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. CYCLIC REDUNDANCY CHECK (CRC) - THE HEAVY GATE TOPIC -->
+  <div class="content-box border-l-4 border-l-emerald-500">
+    <h2 class="text-xl font-bold text-emerald-400 mb-3">4️⃣ Cyclic Redundancy Check (CRC) Polynomial Math</h2>
+    <p class="text-sm text-gray-300 mb-4">CRC treats bit strings as algebraic polynomials with binary coefficients (modulo-2 arithmetic). It is used in Ethernet, Wi-Fi, and ATM.</p>
+
+    <div class="bg-[#202024] p-4 rounded border border-[var(--border)] mb-4">
+      <h4 class="font-bold text-white mb-2 text-sm">Step-by-Step CRC Algorithm:</h4>
+      <ol class="text-xs text-gray-300 space-y-2 list-decimal list-inside">
+        <li>Let the data word be <code>M</code> (of length <code>m</code> bits).</li>
+        <li>Let the Generator Polynomial be <code>G(x)</code> of degree <strong>k</strong> (so it has <code>k + 1</code> bits).</li>
+        <li>Append <strong>k zeros</strong> to the end of <code>M</code> (forming <code>M &middot; 2<sup>k</sup></code>).</li>
+        <li>Perform <strong>Modulo-2 Division</strong> (binary division using XOR instead of subtraction) of the appended data by <code>G(x)</code>.</li>
+        <li>The remainder obtained is the <strong>CRC Checksum (FCS)</strong> of length <strong>k bits</strong>.</li>
+        <li><strong>Transmitted Codeword</strong> = Data bits + Remainder (replaces the appended zeros).</li>
+        <li><strong>Receiver Verification:</strong> Divide the received codeword by <code>G(x)</code>. If Remainder == 0, no error detected!</li>
+      </ol>
+    </div>
+
+    <!-- CRC Example -->
+    <h4 class="font-bold text-blue-300 text-sm mb-2">Worked GATE Example:</h4>
+    <div class="bg-[#121215] p-4 border border-[var(--border)] rounded text-xs font-mono text-gray-300 space-y-1 mb-4">
+      <p>Data M = 1010000, Generator G(x) = x<sup>3</sup> + 1 &rarr; Binary: 1001 (Degree k = 3)</p>
+      <p>Append 3 zeros: 1010000<strong>000</strong></p>
+      <p>Divide 1010000000 by 1001 via XOR:</p>
+      <p class="text-emerald-400">
+        &nbsp;1010000000<br>
+        ^1001<br>
+        -------<br>
+        &nbsp;&nbsp;011000000<br>
+        &nbsp;^0000<br>
+        -------<br>
+        &nbsp;&nbsp;&nbsp;11000000<br>
+        &nbsp;&nbsp;^1001<br>
+        -------<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;1010000<br>
+        &nbsp;&nbsp;&nbsp;^1001<br>
+        -------<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;011000 &rarr; Remainder after full division = <strong>011</strong>
+      </p>
+      <p class="text-white mt-2">Transmitted Codeword = 1010000<strong>011</strong></p>
+    </div>
+
+    <!-- Error Detection Capabilities of G(x) -->
+    <div class="bg-[#18181b] p-4 rounded border border-[var(--border)]">
+      <h4 class="font-bold text-white mb-2 text-sm">Error Detection Capabilities of CRC:</h4>
+      <ul class="text-xs text-[var(--muted-foreground)] space-y-1">
+        <li>• <strong>Single bit errors:</strong> Detected if G(x) has at least 2 non-zero terms (x<sup>k</sup> + ... + x<sup>0</sup>).</li>
+        <li>• <strong>All odd numbers of errors:</strong> Detected if G(x) contains (x + 1) as a factor.</li>
+        <li>• <strong>Burst errors of length &le; k:</strong> 100% detected!</li>
+        <li>• <strong>Burst error of length k + 1:</strong> Detected with probability 1 - (1/2)<sup>k-1</sup>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 5. CHECKSUM & HAMMING CODE -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">5️⃣ Internet Checksum & Hamming Code</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-blue-300 text-sm mb-2">Internet Checksum (used in IP, TCP, UDP)</h4>
+        <p class="text-xs text-gray-300 mb-2">Data is treated as a sequence of 16-bit integers.</p>
+        <ol class="text-xs text-[var(--muted-foreground)] space-y-1 list-decimal list-inside">
+          <li>Sum all 16-bit integers using 1's complement arithmetic (any carry out from the 16th bit is wrapped around and added to the sum).</li>
+          <li>Take the 1's complement (NOT) of the final sum. This is the Checksum.</li>
+          <li>Receiver adds all fields including checksum; result must be all 1s (0xFFFF).</li>
+        </ol>
+      </div>
+
+      <div class="bg-[#121215] p-4 border border-[var(--border)] rounded">
+        <h4 class="font-bold text-emerald-300 text-sm mb-2">Hamming Code (Error Correction)</h4>
+        <p class="text-xs text-gray-300 mb-2">Redundant parity bits <code>r</code> are placed at positions that are powers of 2 (positions 1, 2, 4, 8, 16...).</p>
+        <div class="text-center font-mono text-emerald-400 py-1 border border-emerald-500/30 rounded bg-emerald-500/10 mb-2 text-xs">
+          2<sup>r</sup> &ge; m + r + 1
+        </div>
+        <p class="text-xs text-gray-400">Where <code>m</code> is data bits and <code>r</code> is redundant parity bits.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. GATE TRAPS -->
+  <div class="content-box">
+    <h2 class="text-xl font-bold text-white mb-3">6️⃣ GATE Traps to Avoid</h2>
+    
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 1: Number of Zeros to Append in CRC</h4>
+      <p class="text-sm text-gray-300">If the generator is given as a polynomial: <code>G(x) = x<sup>4</sup> + x + 1</code>, its <strong>degree is 4</strong>. You append exactly <strong>4 zeros</strong> (degree k), NOT 5 zeros! The binary representation of G(x) is <code>10011</code> (5 bits), but the number of appended zeros is always equal to the highest exponent (k = 4).</p>
+    </div>
+
+    <div class="gate-trap">
+      <h4 class="font-bold text-red-400 mb-1 flex items-center gap-2">⚠️ TRAP 2: Bit Stuffing Destuffing at Receiver</h4>
+      <p class="text-sm text-gray-300">When destuffing, if the receiver sees <code>0111110</code>, it removes the <code>0</code>. But if it sees <code>01111110</code>, that is NOT data—that is the closing <code>FLAG</code> byte indicating end of frame!</p>
+    </div>
+  </div>
+
+  <!-- Next Nav -->
+  <div class="text-center mt-8 pb-8">
+    <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+      Return to CN Index
+    </a>
+  </div>
+
+</body>
+</html>
